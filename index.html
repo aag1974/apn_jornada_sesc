@@ -1,3182 +1,424 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<title>Jornada do Cliente Sesc 504 Sul</title>
-<style>
-    :root{
-      --bg:#0b1020; --fg:#e9eefb; --muted:#b7c2e0; --card:#121a33; --line:#2a3563;
-      --accent:#7aa2ff; --accent2:#6ee7b7; --warn:#fbbf24; --danger:#fb7185;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; background:linear-gradient(140deg,#070a14, #0b1020 35%, #0b1533);
-      color:var(--fg); font: 16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;
-      overflow:hidden;
-    }
-    a{color:var(--accent)}
-    .deck{height:100%; width:100%; position:relative;}
-    .slide{position:absolute; inset:0; padding:56px 64px 64px; display:none;}
-    .slide.active{display:block;}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesquisa de Avaliação da Jornada do Cliente - SESC DF 504 Sul</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    .topbar{
-      position:fixed; left:0; right:0; top:0; height:44px; display:flex; align-items:center;
-      padding:0 18px; border-bottom:1px solid rgba(255,255,255,.06);
-      background:rgba(10,14,30,.55); backdrop-filter: blur(10px);
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Estrutura base alinhada aos templates das etapas */
+    .presentation-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .header-logos {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .logo {
+      height: 35px;
+      background: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
+    .content {
+      flex: 1;
+      background: white;
+      padding: 40px 60px;
+      overflow: auto;
+    }
+
+    .main-title {
+      font-size: 38px;
+      font-weight: 900;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 17px;
+      color: #666;
+      margin-bottom: 14px;
+    }
+
+    .intro-insight {
+      background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 50%);
+      border-left: 4px solid #fdcb6e;
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      margin-bottom: 22px;
+    }
+
+    .intro-insight strong { color: #d97706; }
+
+    /* Cards (mesmo DNA dos feature-cards das etapas) */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      border-radius: 14px;
+      padding: 22px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 180px;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #fdcb6e;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .card-badge {
+      background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+      color: #333;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    /* Badges específicos por etapa */
+    .card-1 .card-badge { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #333; }
+    .card-2 .card-badge { background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%); color: #fff; }
+    .card-3 .card-badge { background: linear-gradient(135deg, #93c5fd 0%, #94a3b8 100%); color: #1e293b; }
+    .card-4 .card-badge { background: linear-gradient(135deg, #fab1a0 0%, #ffeaa7 100%); color: #333; }
+    .card-5 .card-badge { background: linear-gradient(135deg, #d4a5ff 0%, #b794f6 100%); color: #fff; }
+    .card-6 .card-badge { background: linear-gradient(135deg, #55efc4 0%, #81ecec 100%); color: #0d5045; }
+
+    .card-icon {
+      font-size: 26px;
+      line-height: 1;
+      opacity: 0.95;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+      line-height: 1.2;
+    }
+
+    .card-description {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: rgba(0, 0, 0, 0.06);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .card-footer{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
       gap:12px;
-      z-index:80;
-    }
-    .topRight{margin-left:auto; display:flex; align-items:center; gap:14px}
-
-    .btn{
-      appearance:none;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.92);
-      font:inherit;
-      font-size:12px;
-      padding:8px 10px;
-      border-radius:10px;
-      cursor:pointer;
-      transition:transform .08s ease, background .15s ease, border-color .15s ease;
-      user-select:none;
-    }
-    .btn:hover{background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.22)}
-    .btn:active{transform:translateY(1px)}
-    .btn:focus{outline:none; box-shadow:0 0 0 3px rgba(84,167,255,.22)}
-
-    /* Modo "imprimir tudo": força exibição contínua de todos os slides antes do print */
-    body.printAll{overflow:visible !important; height:auto !important}
-    body.printAll .deck{height:auto !important; overflow:visible !important}
-    body.printAll .slide{display:block !important; position:relative !important; inset:auto !important; min-height:0 !important}
-    body.printAll .chapters, body.printAll .footer{display:none !important}
-    .logos{display:flex; align-items:center; gap:10px}
-    .logoWrap{
-      display:flex; align-items:center; justify-content:center;
-      height:26px; padding:2px 8px;
-      border-radius:10px;
-      background:rgba(255,255,255,.92);
-      border:1px solid rgba(0,0,0,.12);
-      box-shadow: 0 10px 22px rgba(0,0,0,.18);
-    }
-    .logoWrap img{height:20px; width:auto; display:block}
-    .logoWrap.opiniao img{height:18px}
-    @media (max-width: 980px){
-      .logoWrap{height:24px; padding:2px 6px}
-      .logoWrap img{height:18px}
-      .logoWrap.opiniao img{height:16px}
-    }
-    
-    @media (max-width: 980px){
-      .slide{padding:56px 22px 64px}
-      .footer{left:22px; right:22px; bottom:44px}
-      .chapters{left:12px; right:12px}
-      #title{max-width:64%}
     }
 
-    .brand{font-weight:650; letter-spacing:.2px; color:var(--muted); font-size:13px}
-    .brand b{color:var(--fg)}
-    .chapters{
-      position:absolute; left:64px; right:64px; bottom:10px;
-      display:flex; align-items:flex-end; gap:0;
-      pointer-events:auto;
-      z-index:2;
-    }
-    .chaptersTrack{position:relative; width:100%; height:28px;}
-    .chItem{
-      position:absolute; bottom:0;
-      transform:translateX(-50%);
-      cursor:pointer;
-      user-select:none;
-      text-align:center;
-      min-width:110px;
-    }
-    .chDot{
-      width:10px; height:10px; border-radius:999px;
-      margin:0 auto 6px;
-      background:rgba(255,255,255,.20);
-      border:1px solid rgba(255,255,255,.22);
-      box-shadow: 0 6px 14px rgba(0,0,0,.25);
-    }
-    .chLbl{
-      font-size:11px;
-      color:rgba(233,238,251,.72);
-      line-height:1.1;
-      padding:0 6px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .chItem.active .chDot{background:rgba(122,162,255,.85); border-color:rgba(122,162,255,.95)}
-    .chItem.active .chLbl{color:var(--fg); font-weight:750}
-
-    .progress{position:absolute; left:0; right:0; bottom:0; height:6px; background:rgba(255,255,255,.06);}
-    .progress > div{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2));}
-    .footer{
-      position:absolute; left:64px; right:64px; bottom:44px;
-      display:flex; justify-content:space-between; align-items:flex-end;
-      color:var(--muted); font-size:12px;
-      z-index:3;
-      pointer-events:none;
-    }
-    #where{min-width:72px}
-    #title{text-align:right; max-width:70%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-
-    h1,h2,h3{margin:0 0 12px}
-    h1{font-size:42px; line-height:1.1; letter-spacing:-.5px}
-    h2{font-size:30px; line-height:1.15; letter-spacing:-.3px}
-    h3{font-size:20px; color:var(--muted); font-weight:600}
-    p{margin:0 0 12px; color:var(--fg)}
-    ul{margin:10px 0 0 18px; padding:0; color:var(--fg)}
-    li{margin:8px 0}
-    .grid{display:grid; gap:16px}
-    .cols-2{grid-template-columns:1fr 1fr}
-    .cols-3{grid-template-columns:1fr 1fr 1fr}
-    .card{
-      background:rgba(18,26,51,.85); border:1px solid rgba(255,255,255,.08); border-radius:16px;
-      padding:16px 16px 14px; box-shadow:var(--shadow);
-    }
-    .kpi{display:flex; flex-direction:column; gap:6px}
-    .kpi .label{color:var(--muted); font-size:12px}
-    .kpi .value{font-size:28px; font-weight:750; letter-spacing:-.3px}
-    .kpi .sub{color:var(--muted); font-size:12px}
-
-    .tag{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
-      background:rgba(122,162,255,.12); border:1px solid rgba(122,162,255,.22); color:var(--fg);
-      font-size:12px; font-weight:650;
-    }
-    .tag.warn{background:rgba(251,191,36,.12); border-color:rgba(251,191,36,.22)}
-    .tag.danger{background:rgba(251,113,133,.12); border-color:rgba(251,113,133,.22)}
-    .tag.ok{background:rgba(110,231,183,.10); border-color:rgba(110,231,183,.22)}
-
-    .muted{color:var(--muted)}
-    .small{font-size:12px; color:var(--muted)}
-    .qtxt{margin-top:8px; font-size:12px; color:var(--muted)}
-    .qtxt b{color:var(--fg)}
-    .big{font-size:20px}
-
-    .divider{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
-
-    table{width:100%; border-collapse:collapse; font-size:13px}
-    th,td{padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.08); text-align:left; vertical-align:top}
-    th{color:var(--muted); font-weight:700}
-    td.num{text-align:right; font-variant-numeric: tabular-nums;}
-
-    /* In-table percentage bars */
-    td.pctBar{position:relative;}
-    td.pctBar .bar{position:absolute; left:8px; right:8px; top:50%; transform:translateY(-50%);
-      height:14px; border-radius:8px; background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.06);
-    }
-    td.pctBar .bar i{display:block; height:100%; border-radius:8px; background:rgba(122,162,255,.45);}
-    td.pctBar .txt{position:relative; z-index:1;}
-
-    .callout{border-left:4px solid var(--accent); padding:10px 12px; background:rgba(122,162,255,.08); border-radius:10px}
-    .note{border-left:4px solid var(--warn); padding:10px 12px; background:rgba(251,191,36,.08); border-radius:10px}
-
-    .kbd{display:inline-flex; align-items:center; gap:6px; color:var(--muted); font-size:12px;}
-    .key{
-      border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06);
-      padding:2px 6px; border-radius:6px; font-variant-numeric: tabular-nums;
-    }
-
-    .titleRow{display:flex; gap:12px; align-items:flex-start; justify-content:space-between}
-    .titleRow .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    .spacer{height:6px}
-
-    /* Hub (etapas) */
-    .hub{
-      display:flex; flex-direction:column; gap:16px;
-    }
-    .hubHead h1{margin-bottom:6px}
-    .hubHead .sub{color:var(--muted); max-width:980px}
-    .hubGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:1200px}
-    .hubBtn{
-      position:relative;
-      border-radius:18px;
-      padding:18px 18px 16px;
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:var(--shadow);
-      cursor:pointer;
-      user-select:none;
-      overflow:hidden;
-      min-height:120px;
-    }
-    .hubBtn:focus{outline:2px solid rgba(122,162,255,.55); outline-offset:2px}
-    .hubBtn .k{font-size:12px; letter-spacing:.2px; color:rgba(233,238,251,.78)}
-    .hubBtn .t{font-size:20px; font-weight:800; letter-spacing:-.2px; margin-top:6px}
-    .hubBtn .d{margin-top:8px; color:rgba(233,238,251,.78)}
-    .hubBtn .meta{margin-top:10px; display:flex; gap:8px; flex-wrap:wrap}
-    .hubBtn .pill{display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; font-size:12px;
-      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:var(--fg);
-    }
-    .hubBtn.disabled{cursor:not-allowed; opacity:.55}
-    .hubBtn.disabled:hover{filter:none}
-    .hubBtn:hover{filter:brightness(1.05)}
-
-    .hubBtn.stage1{background:linear-gradient(135deg, rgba(251,191,36,.18), rgba(18,26,51,.85) 55%)}
-    .hubBtn.stage2{background:linear-gradient(135deg, rgba(122,162,255,.20), rgba(18,26,51,.85) 55%)}
-    .hubBtn.stage3{background:linear-gradient(135deg, rgba(110,231,183,.16), rgba(18,26,51,.85) 55%)}
-    .hubBtn.stage4{background:linear-gradient(135deg, rgba(251,113,133,.16), rgba(18,26,51,.85) 55%)}
-    .hubBtn.stage5{background:linear-gradient(135deg, rgba(196,181,253,.18), rgba(18,26,51,.85) 55%)}
-.hubBtn.stage6{background:linear-gradient(135deg, rgba(122,162,255,.18), rgba(18,26,51,.85) 55%)}
-@media (max-width: 980px){
-      .hubGrid{grid-template-columns:1fr}
-      .hubBtn{min-height:112px}
-    }
-
-    /* Storytelling */
-    .timeline{display:flex; gap:12px; flex-wrap:wrap; margin-top:10px}
-    .step{flex:1 1 180px; min-width:180px; padding:12px 12px; border-radius:14px;
-      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
-    }
-    .step .t{font-weight:750; letter-spacing:-.2px}
-    .step .d{color:var(--muted); font-size:12px; margin-top:6px}
-    .step.active{border-color:rgba(122,162,255,.35); background:rgba(122,162,255,.08)}
-
-    /* Print */
-    @media print{
-      *{-webkit-print-color-adjust:exact; print-color-adjust:exact; text-shadow:none !important; box-shadow:none !important; filter:none !important; backdrop-filter:none !important;}
-      html,body{height:auto}
-      body{overflow:visible; background:#fff; color:#111; -webkit-font-smoothing:antialiased;}
-
-      /* Força cor sólida em todo o conteúdo do slide (evita texto "lavado" no PDF) */
-      .slide, .slide *{color:#111 !important}
-
-      /* Tipografia: evitar "sombra" por cores semitransparentes */
-      h1,h2{color:#111 !important}
-      h3,.muted,.hubBtn .k,.hubBtn .d{color:#444 !important}
-      p,li,td,th,span,div{color:#111 !important}
-
-      /* Evita sobreposição do layout em 'slides' (absolute) */
-      .deck{height:auto !important}
-      .slide{
-        position:relative !important;
-        inset:auto !important;
-        display:block !important;
-        opacity:1 !important;
-        transform:none !important;
-        pointer-events:auto !important;
-        padding:26mm 16mm 18mm !important;
-        page-break-after:always;
-        break-after:page;
-        background:#fff !important;
-      }
-
-      /* UI de navegação não deve ir para o PDF */
-      .navZone,.chapters,.progress,.footer{display:none !important}
-
-      /* Topbar: repetir em todas as páginas */
-      .topbar{position:fixed !important; top:0; left:0; right:0; height:12mm; padding:0 16mm !important; background:#fff !important; color:#111 !important; border-bottom:1px solid #ddd !important; backdrop-filter:none !important}
-      .topbar .brand{color:#111 !important}
-      .btnPrint{display:none !important}
-      .btnPdf{display:none !important}
-      .logoWrap{background:#fff !important; border-color:#ddd !important}
-
-      /* Hub: garantir que cards quebrem bem */
-      .hubGrid{grid-template-columns:1fr 1fr !important}
-      .hubBtn{box-shadow:none !important; background:#fff !important; border-color:#ddd !important; color:#111 !important}
-      .hubBtn .k,.hubBtn .d,.muted{color:#444 !important}
-      .pill{background:#fff !important; border-color:#ddd !important; color:#444 !important}
-
-      /* Tabelas */
-      table th{background:#f5f5f5 !important; color:#111 !important}
-      table th,table td{border-bottom:1px solid #ddd !important}
-      .barWrap{background:#eee !important}
-
-      /* Remover fundos escuros em cards */
-      .card{box-shadow:none !important; background:#fff !important; border-color:#ddd !important; color:#111 !important}
-    }
-  
-
-    /* =====================================================================
-       TEMA VISUAL — SESC DF (ajustes de layout/cores sem alterar funcionalidade)
-       ===================================================================== */
-    :root{
-      --bg:#f6f8fb;
-      --fg:#0f1f2a;
-      --muted:#556774;
-      --card:#ffffff;
-      --line:#d9e2ec;
-
-      /* Cores de marca (aproximadas a partir do site Sesc DF) */
-      --accent:#3090c8;
-      --accent2:#38a0e8;
-      --warn:#f2b600;
-      --danger:#e11d48;
-      --brandDark:#081820;
-
-      --shadow: 0 12px 28px rgba(8,24,32,.12);
-    }
-
-    body{
-      background:
-        radial-gradient(1200px 800px at 18% -12%, rgba(48,144,200,.18), rgba(48,144,200,0) 60%),
-        radial-gradient(900px 620px at 86% 12%, rgba(56,160,232,.14), rgba(56,160,232,0) 55%),
-        #f6f8fb;
-      color:var(--fg);
-      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
-    }
-
-    a{color:var(--accent)}
-
-    /* Barra superior (header escuro) */
-    .topbar{
-      background:linear-gradient(90deg, #081820 0%, #0b2530 55%, #081820 100%);
-      border-bottom:1px solid rgba(255,255,255,.10);
-    }
-    .brand{color:rgba(255,255,255,.78)}
-    .brand b{color:#fff}
-
-    /* Botões com estética do site */
-    .btn{
+    /* Link discreto de PDF (não compete com o card clicável) */
+    .pdf-pill{
+      position: relative;
+      width:28px;
+      height:28px;
       border-radius:999px;
-      padding:8px 14px;
-      font-weight:600;
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.16);
-      color:#fff;
-    }
-    .btn:hover{background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.22)}
-    .btn:focus{box-shadow:0 0 0 3px rgba(48,144,200,.30)}
-    .btnPrint{background:var(--accent); border-color:var(--accent)}
-    .btnPrint:hover{background:var(--accent2); border-color:var(--accent2)}
-
-    .btnPdf{display:none; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); color:#fff; text-decoration:none}
-    .btnPdf.show{display:inline-flex; align-items:center; gap:8px}
-    .btnPdf.disabled{opacity:.55; cursor:default; pointer-events:none}
-    .btnPdf::before{
-      content:"";
-      width:10px; height:10px;
-      border:2px solid rgba(255,255,255,.88);
-      border-top-color:transparent;
-      border-left-color:transparent;
-      transform:rotate(45deg);
-      border-radius:1px;
-      margin-top:-1px;
-    }
-    .btnPdf.disabled::before{opacity:.7}
-
-    .btnPdfInline{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 14px;
-      border-radius:999px;
-      font-weight:600;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       text-decoration:none;
-      background:rgba(15,31,42,.06);
-      border:1px solid rgba(15,31,42,.10);
-      color:rgba(15,31,42,.92);
-    }
-    .btnPdfInline:hover{background:rgba(15,31,42,.09); border-color:rgba(15,31,42,.14)}
-    .btnPdfInline::before{
-      content:"";
-      width:10px; height:10px;
-      border:2px solid rgba(15,31,42,.75);
-      border-top-color:transparent;
-      border-left-color:transparent;
-      transform:rotate(45deg);
-      border-radius:1px;
-      margin-top:-1px;
-    }
-    .btnPdfInline.disabled{opacity:.55; pointer-events:none}
-
-
-    /* Slides e tipografia */
-    h1{letter-spacing:-.6px}
-    h2{letter-spacing:-.4px}
-    h3{color:var(--muted); font-weight:600}
-    p{color:var(--fg)}
-
-    /* Cards e componentes */
-    .card{
-      background:var(--card);
-      border:1px solid rgba(8,24,32,.08);
-      box-shadow:var(--shadow);
+      font-weight:900;
+      font-size:12px;
+      color:#64748b;
+      background:rgba(0,0,0,0.04);
+      border:1px solid rgba(0,0,0,0.10);
+      flex-shrink:0;
+      opacity:0.9;
     }
 
-    .tag{
-      background:rgba(48,144,200,.10);
-      border:1px solid rgba(48,144,200,.22);
-      color:var(--fg);
+    /* Tooltip do download (hover/focus) */
+    .pdf-pill::after{
+      content: attr(data-tooltip);
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 10px);
+      background: rgba(17, 24, 39, 0.96);
+      color: #fff;
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      z-index: 30;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
     }
-    .tag.warn{background:rgba(242,182,0,.14); border-color:rgba(242,182,0,.28)}
-    .tag.danger{background:rgba(225,29,72,.10); border-color:rgba(225,29,72,.22)}
-    .tag.ok{background:rgba(22,163,74,.10); border-color:rgba(22,163,74,.20)}
+    .pdf-pill::before{
+      content: "";
+      position: absolute;
+      right: 10px;
+      bottom: calc(100% + 4px);
+      width: 8px;
+      height: 8px;
+      background: rgba(17, 24, 39, 0.96);
+      transform: rotate(45deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      z-index: 29;
+    }
+    .pdf-pill:hover::after,
+    .pdf-pill:focus-visible::after{
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .pdf-pill:hover::before,
+    .pdf-pill:focus-visible::before{
+      opacity: 1;
+    }
+    .pdf-pill:hover{
+      color:#1e3c72;
+      background:rgba(30,60,114,0.08);
+      border-color:rgba(30,60,114,0.35);
+    }
+/* Sutilezas por etapa (faixa superior) */
+    .card-1 { border-top: 6px solid #fdcb6e; }
+    .card-2 { border-top: 6px solid #74b9ff; }
+    .card-3 { border-top: 6px solid #94a3b8; }
+    .card-4 { border-top: 6px solid #ffa07a; }
+    .card-5 { border-top: 6px solid #b794f6; }
+    .card-6 { border-top: 6px solid #5eead4; }
 
-    .callout{border-left-color:var(--accent); background:rgba(48,144,200,.08)}
-    .note{border-left-color:var(--warn); background:rgba(242,182,0,.10)}
-
-    /* Rodapé e navegação */
-    .footer{color:var(--muted)}
-    .progress{background:rgba(8,24,32,.08)}
-
-    .chDot{
-      background:rgba(8,24,32,.14);
-      border:1px solid rgba(8,24,32,.18);
-      box-shadow: 0 6px 14px rgba(8,24,32,.10);
-    }
-    .chLbl{color:rgba(15,31,42,.72)}
-    .chItem.active .chDot{background:var(--accent); border-color:var(--accent2)}
-    .chItem.active .chLbl{color:var(--fg)}
-
-    /* Tabelas */
-    th{color:var(--muted)}
-    th,td{border-bottom:1px solid rgba(8,24,32,.10)}
-    td.pctBar .bar{background:rgba(8,24,32,.06); border:1px solid rgba(8,24,32,.08)}
-    td.pctBar .bar i{background:rgba(48,144,200,.55)}
-
-    /* Hub (etapas): cartões claros com acentos) */
-    .hubBtn{
-      background:#fff;
-      border:1px solid rgba(8,24,32,.10);
-      box-shadow:var(--shadow);
-      border-radius:20px;
-    }
-    .hubBtn .k{color:rgba(15,31,42,.72)}
-    .hubBtn .d{color:rgba(15,31,42,.72)}
-    .hubBtn .pill{background:rgba(8,24,32,.04); border-color:rgba(8,24,32,.10); color:var(--fg)}
-
-    .hubBtn.stage1{background:linear-gradient(135deg, rgba(242,182,0,.22), #fff 58%)}
-    .hubBtn.stage2{background:linear-gradient(135deg, rgba(48,144,200,.18), #fff 58%)}
-    .hubBtn.stage3{background:linear-gradient(135deg, rgba(22,163,74,.12), #fff 58%)}
-    .hubBtn.stage4{background:linear-gradient(135deg, rgba(225,29,72,.10), #fff 58%)}
-    .hubBtn.stage5{background:linear-gradient(135deg, rgba(125,86,241,.10), #fff 58%)}
-    .hubBtn.stage6{background:linear-gradient(135deg, rgba(122,162,255,.10), #fff 58%)}
-
-    /* Fundo dos slides por etapa — segue o mesmo tom dos cartões da capa */
-    /* Etapa 1: Cliente Secreto (amarelo) */
-    .slide[data-stage="cs"]{
-      background:
-        radial-gradient(1200px 800px at 18% -12%, rgba(242,182,0,.22), rgba(242,182,0,0) 60%),
-        radial-gradient(900px 620px at 86% 12%, rgba(242,182,0,.14), rgba(242,182,0,0) 55%),
-        #f6f8fb;
-    }
-    /* Etapa 2: Quali Clientes (azul) */
-    .slide[data-stage="qualCli"]{
-      background:
-        radial-gradient(1200px 800px at 18% -12%, rgba(48,144,200,.20), rgba(48,144,200,0) 60%),
-        radial-gradient(900px 620px at 86% 12%, rgba(56,160,232,.16), rgba(56,160,232,0) 55%),
-        #f6f8fb;
-    }
-    /* Etapa 3: Quanti Clientes (verde) */
-    .slide[data-stage="quantCliTel"]{
-      background:
-        radial-gradient(1200px 800px at 18% -12%, rgba(22,163,74,.16), rgba(22,163,74,0) 60%),
-        radial-gradient(900px 620px at 86% 12%, rgba(22,163,74,.10), rgba(22,163,74,0) 55%),
-        #f6f8fb;
-    }
-    /* Etapa 4: Quali Colaboradores (magenta) */
-    .slide[data-stage="qualInt"]{
-      background:
-        radial-gradient(1200px 800px at 18% -12%, rgba(225,29,72,.14), rgba(225,29,72,0) 60%),
-        radial-gradient(900px 620px at 86% 12%, rgba(225,29,72,.09), rgba(225,29,72,0) 55%),
-        #f6f8fb;
-    }
-    /* Etapa 5: Quanti Colaboradores (roxo) */
-    .slide[data-stage="funcCenso"]{
-      background:
-        radial-gradient(1200px 800px at 18% -12%, rgba(125,86,241,.14), rgba(125,86,241,0) 60%),
-        radial-gradient(900px 620px at 86% 12%, rgba(125,86,241,.09), rgba(125,86,241,0) 55%),
-        #f6f8fb;
-    }
-    /* Síntese Consolidada (azul institucional) */
-    .slide[data-stage="sintese"]{
-      background:
-        radial-gradient(1200px 800px at 18% -12%, rgba(122,162,255,.18), rgba(122,162,255,0) 60%),
-        radial-gradient(900px 620px at 86% 12%, rgba(122,162,255,.12), rgba(122,162,255,0) 55%),
-        #f6f8fb;
+    @media (max-width: 1100px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
     }
 
-
-    /* Storytelling steps */
-    .step{background:rgba(255,255,255,.70); border:1px solid rgba(8,24,32,.08)}
-    .step .d{color:var(--muted)}
-    .step.active{border-color:rgba(48,144,200,.35); background:rgba(48,144,200,.08)}
-
-    /* Ajuste de logos sobre header escuro */
-    .logoWrap{box-shadow:0 8px 18px rgba(0,0,0,.18)}
-
-</style>
+    @media (max-width: 768px) {
+      .content { padding: 28px 22px; }
+      .main-title { font-size: 30px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .header { padding: 14px 18px; flex-direction: column; gap: 12px; }
+    }
+  </style>
 </head>
 <body>
-<div class="deck" id="deck">
-<div class="topbar">
-<div class="brand"><b>Sesc DF 504 Sul</b> · Painel de Resultados</div>
-<div class="topRight">
-  <div class="logos" aria-label="Logos">
-    <span class="logoWrap sesc"><img id="logoSesc" alt="SESC" src=""/></span>
-    <span class="logoWrap opiniao"><img id="logoOpiniao" alt="Opinião" src=""/></span>
-  </div>
-  <a class="btn btnPdf" id="pdfBtn" href="#" download target="_blank" rel="noopener">Baixar PDF</a>
-  <button class="btn btnPrint" id="printBtn" type="button">Imprimir PDF</button>
-</div>
-</div>
-<!-- SLIDES -->
-<section class="slide active" data-stage="hub" data-title="Etapas do projeto">
-<div class="hub">
-<div class="hubHead">
-<h1>Pesquisa de Avaliação da Jornada do Cliente</h1>
-<div class="sub">Selecione a etapa para acessar a apresentação correspondente.</div>
-</div>
-<div aria-label="Etapas da pesquisa" class="hubGrid" role="navigation">
-          <div class="hubBtn stage1" data-stage="cs" tabindex="0">
-            <div class="k">Etapa 1</div>
-            <div class="t">Cliente Secreto</div>
-            <div class="d">Visitas simuladas para observar a jornada em situações reais</div>
-            <div class="meta">
-              <span class="pill">6 Simulações</span>
-              <span class="pill">3 por segmento</span>
+  <div class="presentation-container">
+    <div class="header">
+      <div class="header-title">Sesc DF 504 Sul · Painel de Resultados</div>
+      <div class="header-logos">
+        <img src="https://www.sescpb.com.br/wp-content/uploads/2021/03/cropped-logo-sesc.png" alt="SESC" class="logo" />
+        <img src="https://grupoopiniao.inf.br/wp-content/uploads/2025/05/OPINIAO_marca_F01.png" alt="Opinião Consultoria" class="logo" />
+      </div>
+    </div>
+
+    <div class="content">
+      <h1 class="main-title">Pesquisa de Avaliação da Jornada do Cliente</h1>
+      <p class="subtitle">Selecione a etapa para acessar a apresentação correspondente.</p>
+
+      <div class="intro-insight">
+        <strong>Nota de leitura:</strong> Cada apresentação foi desenhada para leitura autoexplicativa (título → insight → evidências → notas/implicações).
+      </div>
+
+            <div class="cards-grid">
+        <div class="card card-1" onclick="navigateToStage(1)">
+          <div>
+            <div class="card-top">
+              <span class="card-badge">Etapa 1</span>
+              <span class="card-icon">🕵️</span>
             </div>
+            <h2 class="card-title">Cliente Secreto</h2>
+            <p class="card-description">Visitas simuladas para observar a jornada em situações reais.</p>
           </div>
-          <div class="hubBtn stage2" data-stage="qualCli" tabindex="0">
-            <div class="k">Etapa 2</div>
-            <div class="t">Quali Clientes</div>
-            <div class="d">Entrevistas em profundidade</div>
-            <div class="meta">
-              <span class="pill">12 entrevistas</span>
-              <span class="pill">6 por segmento</span>
+
+          <div class="card-footer">
+            <div class="card-tags">
+              <span class="tag">6 simulações</span>
+              <span class="tag">3 por segmento</span>
             </div>
+            <a class="pdf-pill" href="Etapa1_Cliente_Secreto.pdf" download onclick="event.stopPropagation();" data-tooltip="Baixar relatório (PDF)" aria-label="Baixar relatório (PDF)">⬇</a>
           </div>
-          <div class="hubBtn stage3" data-stage="quantCliTel" tabindex="0">
-            <div class="k">Etapa 3</div>
-            <div class="t">Quanti Clientes</div>
-            <div class="d">Entrevistas por telefone</div>
-            <div class="meta">
-              <span class="pill">500 entrevistas</span>
-              <span class="pill">250 por segmento</span>
-            </div>
-          </div>
-          <div class="hubBtn stage4" data-stage="qualInt" tabindex="0">
-            <div class="k">Etapa 4</div>
-            <div class="t">Quali Colaboradores</div>
-            <div class="d">Entrevistas em profundidade</div>
-            <div class="meta">
-              <span class="pill">10 entrevistas</span>
-              <span class="pill">5 por segmento</span>
-            </div>
-          </div>
-          <div class="hubBtn stage5" data-stage="funcCenso" tabindex="0">
-            <div class="k">Etapa 5</div>
-            <div class="t">Quanti Colaboradores</div>
-            <div class="d">Levantamento censitário</div>
-            <div class="meta">
-              <span class="pill">87 entrevistas</span>
-              <span class="pill">Diversos segmentos</span>
-            </div>
-          </div>
-          <div class="hubBtn stage6" data-stage="sintese" tabindex="0">
-            <div class="k">Síntese</div>
-            <div class="t">Visão Consolidada</div>
-            <div class="d">Principais conclusões e prioridades integrando todas as etapas do estudo.</div>
-            <div class="meta">
-              <span class="pill">Convergências</span>
-              <span class="pill">Prioridades</span>
-              <span class="pill">Roadmap</span>
-            </div>
-          </div>
-</div>
-<div class="note" style="max-width:1100px">
-<b>Dica de uso:</b> após entrar em uma etapa, use <span class="key">←</span> <span class="key">→</span> para navegar e clique nos marcos do rodapé para ir direto aos capítulos.
         </div>
-</div>
-</section><section class="slide" data-stage="qualCli" data-title="Capa"><div class="titleRow">
-<div>
-<h1>Quali Clientes</h1>
-<h3>Unidade Sesc DF 504 Sul · Entrevistas em profundidade · Jan/2026</h3>
-<div class="spacer"></div>
-<div class="tag ok">Base analisada: n=12 (Saúde=6 · Esportes=6)</div>
-<div class="spacer"></div>
-<p class="muted">Síntese qualitativa com foco em imagem institucional, jornada de acesso/atendimento e oportunidades de melhoria da experiência.</p>
-</div>
-<div class="right"><a class="btnPdfInline" href="Etapa2%264_Quali_EP.pdf" download target="_blank" rel="noopener">Baixar PDF</a></div>
 
-</div></section>
+        <div class="card card-2" onclick="navigateToStage(2)">
+          <div>
+            <div class="card-top">
+              <span class="card-badge">Etapa 2</span>
+              <span class="card-icon">🎙️</span>
+            </div>
+            <h2 class="card-title">Quali Clientes</h2>
+            <p class="card-description">Entrevistas em profundidade com clientes (Saúde e Esportes).</p>
+          </div>
 
-<section class="slide" data-stage="qualCli" data-title="Contexto e método"><div class="grid cols-2">
-<div class="card">
-<h2>Contexto e método</h2>
-<ul class="bul">
-<li><b>Técnica:</b> entrevistas em profundidade (40 min em média).</li>
-<li><b>Segmentos:</b> Saúde e Esportes (n=6 por segmento).</li>
-<li><b>Foco analítico:</b> percepção, fricções e expectativas ao longo da jornada (canais e etapas).</li>
-</ul>
-<div class="divider"></div>
-<div class="callout"><b>Leitura recomendada:</b> use esta etapa como complemento interpretativo às evidências operacionais (Cliente Secreto) e aos resultados quantitativos (quando disponíveis).</div>
-</div>
-<div class="card">
-<h3>Como ler esta etapa no painel</h3>
-<ul class="bul">
-<li><b>Síntese</b>: achados-chave (o que mais explica a experiência).</li>
-<li><b>Jornada</b>: etapas e momentos da verdade.</li>
-<li><b>Canais</b>: papel do Portal/Telefone/WhatsApp/App e principais fricções.</li>
-<li><b>Saúde vs Esportes</b>: diferenças que mudam decisão de gestão.</li>
-<li><b>Oportunidades</b>: agenda de melhoria, com quick wins e mudanças estruturais.</li>
-</ul>
-<p class="small">Relatório completo (PPT/PDF) permanece como material de consulta anexo.</p>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Síntese"><div class="titleRow"><div>
-<h2>Síntese executiva</h2>
-<p class="muted">Principais aprendizados a partir das entrevistas com clientes.</p>
-</div></div>
-<div class="grid cols-2">
-<div class="card">
-<h3>Imagem e expectativa</h3>
-<ul class="bul">
-<li>O Sesc é associado a <b>coletividade</b>, desdobrada em <b>organização</b>, <b>qualidade</b> e <b>acolhimento</b>.</li>
-<li>A escolha pela unidade tende a vir por <b>indicação</b>, <b>experiências prévias</b>, <b>proximidade</b> e busca por serviços específicos.</li>
-</ul>
-</div>
-<div class="card">
-<h3>O que mais pesa na jornada</h3>
-<ul class="bul">
-<li><b>Portal</b> é instrumental (consulta de regras/horários) e pouco problemático.</li>
-<li><b>WhatsApp</b> é percebido como ágil e humano, porém com <b>expectativa alta de resposta</b>.</li>
-<li><b>App</b> é o canal mais controverso (instabilidade/travamentos) e com <b>baixo uso efetivo</b>.</li>
-<li><b>Chegada</b> é vista como acolhedora (orientação, objetividade, organização).</li>
-<li><b>Pós-atendimento</b> é pouco estruturado; exceção: lembretes e notificações em saúde.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Jornada"><h2>Jornada de acesso e agendamento</h2>
-<p class="muted">Caminhos mais recorrentes relatados pelos clientes.</p>
-<div class="grid cols-4" style="grid-template-columns:repeat(4,1fr)">
-  <div class="card"><div class="tag">1</div><h3>Busca inicial</h3><p class="muted">Google ou presencial</p><ul class="bul"><li>Entender “como funciona”</li><li>Primeiras informações</li></ul></div>
-  <div class="card"><div class="tag">2</div><h3>Portal ou telefone</h3><p class="muted">Aprofundar serviços</p><ul class="bul"><li>Regras e procedimentos</li><li>Orientação geral</li></ul></div>
-  <div class="card"><div class="tag">3</div><h3>WhatsApp ou app</h3><p class="muted">Confirmar e executar</p><ul class="bul"><li>Datas e janelas</li><li>Regras do sistema</li></ul></div>
-  <div class="card"><div class="tag">4</div><h3>Apoio presencial</h3><p class="muted">Quando há impasse</p><ul class="bul"><li>Retorno à unidade</li><li>Ajuda de terceiros</li></ul></div>
-</div>
-<div class="spacer"></div>
-<div class="note"><b>Ponto sensível:</b> a jornada se torna mais custosa quando a informação não é suficiente para resolver no canal digital, gerando “vai-e-volta” e dependência do presencial.</div>
-</section>
-
-<section class="slide" data-stage="qualCli" data-title="Jornada"><div class="grid cols-2">
-<div class="card">
-<h2>Como os clientes chegam (diferenças)</h2>
-<ul class="bul">
-<li><b>Saúde:</b> maior associação à busca digital (Google) por necessidade objetiva (preço, horários, especialidades).</li>
-<li><b>Esportes:</b> maior ocorrência de busca presencial para tirar dúvidas, conhecer opções e estrutura.</li>
-</ul>
-<div class="divider"></div>
-<div class="callout"><b>Implicação:</b> a comunicação inicial precisa contemplar dois “modos” de chegada: informacional (Saúde) e exploratório/prático (Esportes).</div>
-</div>
-<div class="card">
-<h3>O que não apareceu como problema</h3>
-<ul class="bul">
-<li>Não surgiram queixas relevantes sobre <b>acesso ao portal</b> na etapa inicial.</li>
-<li>O portal é lido como ferramenta de apoio (não como experiência emocional).</li>
-</ul>
-<p class="small">Isso não elimina oportunidades de melhoria, mas indica baixa fricção no primeiro acesso ao site.</p>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Canais"><div class="grid cols-2">
-<div class="card">
-<h2>Portal e telefone</h2>
-<ul class="bul">
-<li><b>Portal:</b> canal de apoio para consultar serviços, horários, regras e procedimentos.</li>
-<li><b>Telefone:</b> retaguarda essencial (inclusão geracional; suporte ao digital; resolução em impasses).</li>
-</ul>
-<div class="divider"></div>
-<div class="note"><b>Mensagem-chave:</b> o telefone não substitui o digital; ele sustenta acessibilidade e sensação de cuidado.</div>
-</div>
-<div class="card">
-<h3>Boas práticas a preservar</h3>
-<ul class="bul">
-<li>Orientação clara quando o cliente “trava” no digital.</li>
-<li>Capacidade de esclarecer regras e procedimentos com segurança.</li>
-<li>Linguagem objetiva e confirmatória (reduz incerteza).</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Canais"><div class="grid cols-2">
-<div class="card">
-<h2>WhatsApp</h2>
-<ul class="bul">
-<li>Canal percebido como <b>direto, funcional e ágil</b> para resolver demandas.</li>
-<li>Gera <b>expectativa elevada</b> de diálogo e resposta rápida.</li>
-<li>Quando há demora ou automação pouco resolutiva, a frustração tende a ser maior.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Implicações práticas</h3>
-<ul class="bul">
-<li>Padronizar respostas (clareza + resolutividade) para reduzir “vai-e-volta”.</li>
-<li>Deixar explícito: prazos de resposta, próximos passos e o que será/ não será resolvido por ali.</li>
-<li>Maior associação do WhatsApp à <b>Saúde</b>; em <b>Esportes</b> tende a papel complementar.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Canais"><div class="grid cols-2">
-<div class="card">
-<h2>Aplicativo</h2>
-<ul class="bul">
-<li>Ferramenta mais controversa: <b>falhas, instabilidades e travamentos</b>.</li>
-<li>Problema percebido é <b>desempenho técnico</b> e navegabilidade — não linguagem.</li>
-<li>Há percepção de evolução recente, mas ainda com longo caminho.</li>
-</ul>
-<div class="divider"></div>
-<div class="callout"><b>Diagnóstico qualitativo:</b> o app “existe mais no plano da intenção institucional” do que na experiência cotidiana dos usuários.</div>
-</div>
-<div class="card">
-<h3>O que isso provoca na jornada</h3>
-<ul class="bul">
-<li>Reduz confiança no canal digital quando “não responde como esperado”.</li>
-<li>Aumenta dependência do presencial e do WhatsApp.</li>
-<li>Resistência maior em públicos mais idosos; demanda orientação e apoio humano.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Saúde vs Esportes"><div class="grid cols-2">
-<div class="card">
-<h2>Chegada e acolhimento</h2>
-<p class="muted">Acolhimento aparece como orientação, objetividade, educação e organização.</p>
-<ul class="bul">
-<li>Disponibilidade de colaboradores para receber e orientar.</li>
-<li>Postura segura e disponível dos atendentes.</li>
-<li>Clareza na comunicação sobre procedimentos, fluxos e prazos.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Diferenças relevantes</h3>
-<ul class="bul">
-<li><b>Saúde:</b> maior carga de expectativa; clareza de prazos e encaminhamentos é central; disponibilidade do colaborador é percebida como parte do cuidado.</li>
-<li><b>Esportes:</b> chegada mais descontraída e familiar; foco na organização prática (horários, regras e uso do espaço).</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Saúde vs Esportes"><div class="grid cols-2">
-<div class="card">
-<h2>Estrutura física e organização</h2>
-<ul class="bul">
-<li><b>Saúde:</b> conforto, limpeza, banheiros e sinalização sustentam sensação de cuidado.</li>
-<li><b>Esportes:</b> leitura mais pragmática: funcionalidade, manutenção e melhorias/reformas (ex.: piscina) viabilizam a prática.</li>
-</ul>
-<div class="divider"></div>
-<div class="note"><b>Mensagem-chave:</b> a mesma infraestrutura é avaliada com critérios distintos por tipo de uso (cuidado vs performance/rotina).</div>
-</div>
-<div class="card">
-<h3>Críticas pontuais em esportes</h3>
-<ul class="bul">
-<li>Gestão de vagas (especialmente natação), ocupação por raia e expectativa pós-reforma.</li>
-<li>Interferência entre usos do espaço (ex.: volume de música em aulas paralelas).</li>
-<li>Pontos específicos de manutenção/limpeza (ex.: área do tatame).</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Saúde vs Esportes"><div class="grid cols-2">
-<div class="card">
-<h2>Atendimento / serviço prestado</h2>
-<ul class="bul">
-<li><b>Esportes:</b> diferencial ancorado no vínculo contínuo com professores e no clima de convivência; atenção a limitações e idosos.</li>
-<li><b>Saúde:</b> valor percebido concentrado no acolhimento inicial, organização do atendimento e confiança técnica.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Elemento comum</h3>
-<div class="callout"><b>Atendimento humano</b> emerge como elemento central da experiência, acionado de formas distintas conforme o serviço.</div>
-<ul class="bul">
-<li>Humanização e paciência aparecem como ativos.</li>
-<li>Orientação clara ao longo da jornada reduz insegurança.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Pós-atendimento"><div class="grid cols-2">
-<div class="card">
-<h2>Pós-atendimento</h2>
-<p class="muted">Não se configura como eixo estruturado ou diferencial para a maioria dos clientes.</p>
-<ul class="bul">
-<li>Baixa presença de narrativas espontâneas de acompanhamento.</li>
-<li>Fora Saúde, há poucos registros de contato posterior, fidelização ou continuidade formal.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Exceção positiva em Saúde</h3>
-<ul class="bul">
-<li>Mensagens e notificações de agendamento/retorno são valorizadas.</li>
-<li>Lembretes reforçam sensação de organização e cuidado contínuo.</li>
-</ul>
-<div class="divider"></div>
-<div class="note"><b>Oportunidade:</b> expandir pós-atendimento para além do lembrete operacional, com foco em continuidade e orientação.</div>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualCli" data-title="Oportunidades"><h2>Sugestões dos clientes</h2>
-<p class="muted">Ajustes pontuais e oportunidades de aprimoramento, sem indicação de falhas estruturais graves.</p>
-<div class="grid cols-2">
-<div class="card">
-<h3>Saúde</h3>
-<ul class="bul">
-<li>Ampliar e dar maior clareza à <b>comunicação digital</b> (serviços, especialidades, fluxos e agendamentos).</li>
-<li>Fortalecer o <b>pós-consulta</b> (além de lembretes), reforçando continuidade do cuidado.</li>
-<li>Melhorar orientação inicial (etapas do atendimento, sinalização e informações práticas).</li>
-</ul>
-</div>
-<div class="card">
-<h3>Esportes</h3>
-<ul class="bul">
-<li>Aprimorar <b>gestão de vagas</b> (natação em destaque), incluindo conforto/lotação por turma/raia.</li>
-<li>Organizar uso de espaços para evitar interferência entre atividades simultâneas.</li>
-<li>Ajustes de manutenção/limpeza em áreas específicas para garantir padrão constante.</li>
-</ul>
-</div>
-</div>
-</section>
-
-<section class="slide" data-stage="qualCli" data-title="Oportunidades"><div class="grid cols-2">
-<div class="card">
-<h2>Oportunidades transversais</h2>
-<ul class="bul">
-<li>Fortalecer integração dos canais digitais à jornada real, especialmente o <b>aplicativo</b> (divulgação, clareza de uso, estabilidade).</li>
-<li>Desenvolver ações de incentivo e orientação ao uso digital, com apoio humano (públicos com menor familiaridade tecnológica).</li>
-<li>Aprimorar aspectos operacionais pontuais em esportes (vagas, uso de espaços, conforto).</li>
-<li>Explorar pós-atendimento com mais intencionalidade (continuidade além do lembrete).</li>
-</ul>
-<div class="divider"></div>
-<div class="callout"><b>Princípio:</b> ampliar o digital como complemento mediado — sem substituir o atendimento humano, reconhecido como ativo institucional.</div>
-</div>
-<div class="card">
-<h3>Encerramento</h3>
-<p class="muted">Ao avançar após este slide, o painel retorna automaticamente ao Hub.</p>
-<ul class="bul">
-<li>Use os marcos do rodapé para navegar por trilhas (Síntese, Jornada, Canais, Saúde vs Esportes, Oportunidades).</li>
-<li>Para aprofundamento, consulte o material completo anexo (PPT/PDF).</li>
-</ul>
-</div>
-</div>
-<section class="slide" data-stage="sintese" data-title="Capa">
-  <div class="titleRow">
-    <div>
-      <h1>Síntese Consolidada</h1>
-      <h3>Pesquisa de Avaliação da Jornada do Cliente · Sesc DF 504 Sul</h3>
-    </div>
-    <div class="right">
-      <span class="tag ok">Integração de evidências</span>
-      <span class="tag">Visão única</span>
-    </div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <p class="big"><b>Objetivo:</b> consolidar os principais achados e prioridades a partir de todas as etapas (Cliente Secreto, Quali Clientes, Quanti Clientes, Quali Colaboradores e Quanti Colaboradores), reduzindo o tempo de apresentação e facilitando a tomada de decisão.</p>
-    <div class="divider"></div>
-    <p class="muted">Os relatórios completos (Word/PPT/PDF) permanecem como anexos de consulta.</p>
-  </div>
-</section>
-
-<section class="slide" data-stage="sintese" data-title="Como ler">
-  <h2>Como ler esta síntese</h2>
-  <div class="grid cols-2" style="margin-top:10px">
-    <div class="card">
-      <h3>O que está aqui</h3>
-      <ul>
-        <li>Convergências entre métodos (o que se repete nas evidências).</li>
-        <li>Momentos da verdade na jornada (onde a experiência muda de patamar).</li>
-        <li>Prioridades (quick wins vs estruturais) e roadmap de execução.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>O que fica nos anexos</h3>
-      <ul>
-        <li>Detalhamento completo por pergunta/tema.</li>
-        <li>Volume integral de falas e exemplos.</li>
-        <li>Metodologia completa e apêndices.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-stage="sintese" data-title="Convergências">
-  <h2>Convergências principais</h2>
-  <div class="grid cols-3" style="margin-top:10px">
-    <div class="card">
-      <h3>Ativos</h3>
-      <ul>
-        <li>Acolhimento e qualidade percebida do atendimento como diferencial recorrente.</li>
-        <li>Confiança e sensação de cuidado sustentando vínculo e retorno.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Fricções</h3>
-      <ul>
-        <li>Quebras de expectativa entre canais (informação, regras, prazos).</li>
-        <li>Tempo e previsibilidade em pontos críticos (fila, agenda, capacidade).</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Causas-raiz</h3>
-      <ul>
-        <li>Integração e encaminhamentos entre áreas.</li>
-        <li>Governança de informação e padronização mínima.</li>
-        <li>Dependência de sistemas e capacidade em momentos de pico.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-stage="sintese" data-title="Momentos">
-  <h2>Momentos da verdade na jornada</h2>
-  <div class="timeline" style="margin-top:10px">
-    <div class="step active"><div class="t">1) Pré-contato</div><div class="d">Clareza de regras, documentação e orientação inicial.</div></div>
-    <div class="step active"><div class="t">2) Acesso / agendamento</div><div class="d">Consistência entre canais evita vai-e-volta e frustração.</div></div>
-    <div class="step active"><div class="t">3) Chegada</div><div class="d">Acolhimento + orientação + tempo de espera definem o tom da experiência.</div></div>
-    <div class="step active"><div class="t">4) Serviço</div><div class="d">Resolutividade e previsibilidade, sobretudo em picos.</div></div>
-    <div class="step active"><div class="t">5) Pós-atendimento</div><div class="d">Retorno/continuidade: comunicação proativa e próximos passos claros.</div></div>
-  </div>
-  <div class="card" style="margin-top:12px">
-    <p class="muted">Sugestão: incluir aqui 3 a 5 contrastes decisórios entre Saúde e Esportes, quando necessário.</p>
-  </div>
-</section>
-
-<section class="slide" data-stage="sintese" data-title="Prioridades">
-  <h2>Prioridades consolidadas</h2>
-  <div class="grid cols-2" style="margin-top:10px">
-    <div class="card">
-      <h3>Quick wins (0–30 dias)</h3>
-      <ul>
-        <li>Fonte única de regras/orientações e mensagens padrão por canal.</li>
-        <li>Checklist mínimo de encaminhamento entre áreas.</li>
-        <li>Padronização do “próximo passo” ao final do atendimento.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Estruturais (30–90+ dias)</h3>
-      <ul>
-        <li>Integração de sistemas e redução de retrabalho entre canais.</li>
-        <li>Gestão de capacidade em picos (filas/agenda) com previsibilidade e comunicação.</li>
-        <li>Rotina de governança (atualização de regras + alinhamento interáreas).</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-stage="sintese" data-title="Roadmap">
-  <h2>Roadmap sugerido</h2>
-  <div class="grid cols-3" style="margin-top:10px">
-    <div class="card">
-      <h3>0–30 dias</h3>
-      <ul>
-        <li>Padronizar orientações e mensagens por canal.</li>
-        <li>Implementar checklist de encaminhamento.</li>
-        <li>Definir “dono” por fluxo crítico.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>30–90 dias</h3>
-      <ul>
-        <li>Revisar fluxos interáreas e pontos de ruptura.</li>
-        <li>Treinamento focado nos pontos de maior variabilidade.</li>
-        <li>Instituir governança de informação e rotinas de alinhamento.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>90+ dias</h3>
-      <ul>
-        <li>Melhorias estruturais em sistemas e integrações.</li>
-        <li>Gestão contínua de capacidade e previsibilidade.</li>
-        <li>Monitoramento recorrente (indicadores + voz do cliente).</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-stage="sintese" data-title="Indicadores">
-  <h2>Indicadores para acompanhar evolução</h2>
-  <div class="grid cols-2" style="margin-top:10px">
-    <div class="card">
-      <h3>Experiência do cliente</h3>
-      <ul>
-        <li>Resolutividade no primeiro contato.</li>
-        <li>Tempo de espera e previsibilidade.</li>
-        <li>Consistência de informação entre canais.</li>
-        <li>Satisfação por momento da verdade.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Operação</h3>
-      <ul>
-        <li>Retrabalho por falha de encaminhamento.</li>
-        <li>Migração de canais (quando vira presencial).</li>
-        <li>Incidentes em picos (fila/agenda).</li>
-        <li>Aderência a mensagens padrão e checklist.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-</section>
-<section class="slide" data-stage="cs" data-title="Capa"><div class="titleRow">
-<div>
-<h1>Cliente Secreto</h1>
-<h3>Unidade Sesc DF 504 Sul · Dezembro/2025 · Saúde e Esportes</h3>
-<div class="spacer"></div>
-<div class="tag ok">Base analisada: n=6 simulações (Personas 1–6)</div>
-<div class="spacer"></div>
-<p class="muted">Apresentação da etapa Cliente Secreto com evidências sobre a jornada real do cliente, por canal e por etapa (pré-contato, chegada/entrada, atendimento principal e pós-atendimento).</p>
-</div>
-<div class="right"><a class="btnPdfInline" href="Etapa1_Cliente_Secreto.pdf" download target="_blank" rel="noopener">Baixar PDF</a></div>
-
-</div></section><section class="slide" data-stage="cs" data-title="Contexto e método"><div class="titleRow">
-<div>
-<h2>Como ler esta etapa</h2>
-<p class="muted">A etapa Cliente Secreto é um diagnóstico operacional baseado em observação estruturada do serviço executado. Os resultados são descritivos (n=6) e orientados para padronização e melhoria.</p>
-</div>
-</div><div class="grid cols-3">
-<div class="card">
-<h3>O que foi avaliado</h3>
-<ul class="bul">
-<li>Qualidade do atendimento: acolhimento, clareza, domínio do processo.</li>
-<li>Tempo e previsibilidade (quando aplicável).</li>
-<li>Integração entre canais (portal/aplicativo, WhatsApp e presencial).</li>
-<li>Encerramento e próximos passos.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Como está organizado</h3>
-<ul class="bul">
-<li>Visão geral (notas e dimensões).</li>
-<li>Resultados por etapa da jornada.</li>
-<li>Momentos da verdade e incidentes críticos.</li>
-<li>Recomendações e priorização.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Regras de interpretação</h3>
-<ul class="bul">
-<li>Referência analítica: <b>serviço executado/observado</b>.</li>
-<li>Quando não há dado: item <b>não preenchido</b> ou <b>não aplicável</b>.</li>
-<li>Foco: reduzir esforço do cliente e variabilidade operacional.</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Escopo e base"><div class="grid cols-2">
-<div class="card">
-<h2>Escopo e base</h2>
-<ul class="bul">
-<li><b>6 simulações</b> realizadas em dezembro/2025 (Personas 1–6).</li>
-<li>Serviços: <b>Saúde</b> (3) e <b>Esportes</b> (3).</li>
-<li>Canais: portal/aplicativo, WhatsApp e presencial (conforme roteiro).</li>
-<li>Sem uso de áudios; evidências por formulários e registros de observação.</li>
-</ul>
-<div class="callout">
-<b>Nota metodológica:</b> a amostra é adequada para identificar fricções e momentos da verdade, não para estimativas inferenciais.
-    </div>
-</div>
-<div class="card">
-<h3>Distribuição por segmento</h3>
-<table><thead><tr><th>Segmento</th><th class="num">n</th></tr></thead><tbody><tr><td>Esportes</td><td class="num">3</td></tr><tr><td>Saúde</td><td class="num">3</td></tr></tbody></table>
-<div class="spacer"></div>
-<h3>Canais mais frequentes no recorte</h3>
-<table><thead><tr><th>Segmento</th><th>Canais predominantes</th></tr></thead><tbody><tr><td>Esportes</td><td>Predomínio do presencial (uso parcial de WhatsApp/Portal e registros de limitação do WhatsApp)</td></tr><tr><td>Saúde</td><td>Jornada entre canais (Portal/Sistema + WhatsApp + presencial)</td></tr></tbody></table>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — visão geral"><div class="grid cols-2">
-<div class="card">
-<h2>Nota geral (0–10) por persona</h2>
-<p class="muted">Saúde apresenta notas altas e consistentes; Esportes tem maior variabilidade no recorte observado.</p>
-<table><thead><tr><th class="num">Persona</th><th>Segmento</th><th>Serviço executado (observado)</th><th>Canais utilizados</th><th class="num">Nota geral (0–10)</th></tr></thead><tbody><tr><td class="num">1</td><td>Esportes</td><td>Natação e hidroginástica</td><td>Presencial, WhatsApp, Portal/Sistema</td><td class="num">9</td></tr><tr><td class="num">2</td><td>Esportes</td><td>Musculação</td><td>Presencial, WhatsApp</td><td class="num">7</td></tr><tr><td class="num">3</td><td>Esportes</td><td>Musculação</td><td>Presencial</td><td class="num">9</td></tr><tr><td class="num">4</td><td>Saúde</td><td>Cardiologia</td><td>Presencial, WhatsApp, Portal/Sistema</td><td class="num">10</td></tr><tr><td class="num">5</td><td>Saúde</td><td>Ginecologia</td><td>Presencial, WhatsApp, Portal/Sistema</td><td class="num">10</td></tr><tr><td class="num">6</td><td>Saúde</td><td>Dermatologia</td><td>Presencial, WhatsApp, Portal/Sistema</td><td class="num">8</td></tr></tbody></table>
-</div>
-<div class="card">
-<h3>Leitura gerencial</h3>
-<ul class="bul">
-<li><b>Saúde</b>: desempenho alto; oportunidade concentrada em <b>tempo e previsibilidade</b> (agenda/atrasos).</li>
-<li><b>Esportes</b>: bom desempenho, porém sensível a <b>clareza de regras/requisitos</b> e condições de demanda.</li>
-<li>Ponto transversal: reduzir variabilidade com <b>roteiro mínimo</b> e conteúdo preventivo.</li>
-</ul>
-<div class="callout">
-<b>Lacunas:</b> Persona 6 sem data/horário no formulário; em Esportes, a dimensão de integração entre canais tem cobertura parcial (n=2) por ausência de uso/preenchimento na Persona 3.
-    </div>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — visão geral"><div class="grid cols-2">
-<div class="card">
-<h2>Nota geral por segmento (0–10)</h2>
-<table><thead><tr><th>Segmento</th><th class="num">Média</th><th class="num">Mín</th><th class="num">Máx</th><th class="num">n</th></tr></thead><tbody><tr><td>Esportes</td><td class="num">8,3</td><td class="num">7</td><td class="num">9</td><td class="num">3</td></tr><tr><td>Saúde</td><td class="num">9,3</td><td class="num">8</td><td class="num">10</td><td class="num">3</td></tr></tbody></table>
-<div class="spacer"></div>
-<div class="callout">
-<b>Leitura:</b> Saúde (média 9,3) apresenta desempenho mais alto e consistente do que Esportes (média 8,3) no recorte observado.
-    </div>
-</div>
-<div class="card">
-<h3>O que explica a diferença</h3>
-<ul class="bul">
-<li>Saúde: fluxos digitais e confirmação reforçam clareza e integração entre canais.</li>
-<li>Esportes: regras de acesso/vagas e requisitos são determinantes; quando não estão claras, aumentam esforço do cliente.</li>
-</ul>
-<div class="grid cols-2" style="margin-top:12px">
-<div class="kpi">
-<div class="label">Saúde</div>
-<div class="value">9,3</div>
-<div class="sub">média (n=3)</div>
-</div>
-<div class="kpi">
-<div class="label">Esportes</div>
-<div class="value">8,3</div>
-<div class="sub">média (n=3)</div>
-</div>
-</div>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — dimensões"><div class="card">
-<h2>Desempenho por dimensões (escala 1–5)</h2>
-<p class="muted">Em Esportes, a sensibilidade está em <b>clareza/completude</b> e <b>integração entre canais</b> (com cobertura parcial). Em Saúde, a maior margem relativa é <b>agilidade/tempo</b>.</p>
-<table><thead><tr><th>Segmento</th><th>Dimensão</th><th class="num">Média (1–5)</th><th class="num">n (com dado)</th></tr></thead><tbody><tr><td>Esportes</td><td>Acolhimento e empatia</td><td class="num">4,5</td><td class="num">3</td></tr><tr><td>Esportes</td><td>Clareza e completude</td><td class="num">3,7</td><td class="num">3</td></tr><tr><td>Esportes</td><td>Integração entre canais</td><td class="num">3,5</td><td class="num">2</td></tr><tr><td>Esportes</td><td>Encerramento e próximos passos</td><td class="num">4,3</td><td class="num">3</td></tr><tr><td>Saúde</td><td>Acolhimento e empatia</td><td class="num">5,0</td><td class="num">3</td></tr><tr><td>Saúde</td><td>Clareza e completude</td><td class="num">5,0</td><td class="num">3</td></tr><tr><td>Saúde</td><td>Agilidade e tempo</td><td class="num">4,0</td><td class="num">3</td></tr><tr><td>Saúde</td><td>Integração entre canais</td><td class="num">5,0</td><td class="num">3</td></tr><tr><td>Saúde</td><td>Domínio do processo e segurança</td><td class="num">4,8</td><td class="num">3</td></tr></tbody></table>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — interpretação"><div class="card">
-<h2>O que isso significa na prática</h2>
-<div class="grid cols-2">
-<div>
-<div class="callout">
-<b>Esportes:</b> o principal risco é o cliente chegar ao presencial sem entender regras, requisitos e alternativas, gerando fila, retornos e frustração.
-      </div>
-<div class="callout" style="margin-top:10px">
-<b>Saúde:</b> o ponto mais sensível é <b>tempo e previsibilidade</b> (agenda/atrasos). Sem gestão de expectativa, a confiança cai mesmo com atendimento tecnicamente bom.
-      </div>
-</div>
-<div>
-<h3>Prioridades rápidas (redução de variabilidade)</h3>
-<ul class="bul">
-<li><b>Roteiro mínimo</b>: o que sempre informar (presencial e WhatsApp).</li>
-<li><b>Conteúdo preventivo</b>: regras e perguntas frequentes, antes da fila.</li>
-<li><b>Gestão de espera/atraso</b>: transparência e alternativas.</li>
-</ul>
-</div>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — etapas da jornada"><div class="titleRow">
-<div>
-<h2>Pré-contato (busca de informação e tentativa de agendamento)</h2>
-<p class="muted">Antes do deslocamento, a qualidade da informação define esforço e expectativa. Saúde tende a estruturar o processo no digital; Esportes depende mais do presencial.</p>
-</div>
-</div><div class="grid cols-2">
-<div class="card">
-<h3>Saúde (P4–P6)</h3>
-<ul class="bul">
-<li>Portal/aplicativo percebido como claro e autoexplicativo em mais de uma jornada.</li>
-<li>WhatsApp atua como confirmação e comunicação (mensagens claras, ainda que padronizadas).</li>
-<li>Fricção: indisponibilidade de datas próximas em uma jornada.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Esportes (P1–P3)</h3>
-<ul class="bul">
-<li>Registros indicam baixa resolutividade do WhatsApp para Esportes/Lazer.</li>
-<li>Pré-contato ausente em um caso (jornada concentrada no presencial).</li>
-<li>Risco: cliente descobre regras/requisitos apenas no balcão.</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — etapas da jornada"><div class="titleRow">
-<div>
-<h2>Chegada e entrada (acolhimento inicial e orientação física)</h2>
-<p class="muted">O primeiro minuto define o tom emocional. Sob demanda, a gestão de espera e o foco operacional tornam-se críticos.</p>
-</div>
-</div><div class="grid cols-2">
-<div class="card">
-<h3>O que funciona</h3>
-<ul class="bul">
-<li>Acolhimento cordial e abordagem ativa (“como posso ajudar?”) em múltiplas simulações.</li>
-<li>Orientação clara sobre onde ir/como proceder quando não há fila.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Risco em picos</h3>
-<ul class="bul">
-<li>Espera com baixa comunicação aumenta percepção de desorganização.</li>
-<li>Dinâmica de balcão (conversas paralelas) pode degradar acolhimento percebido.</li>
-</ul>
-<div class="callout">
-<b>Implicação:</b> protocolo mínimo de espera (tempo estimado, ordem, próximos passos) reduz incidentes críticos.
-    </div>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — etapas da jornada"><div class="titleRow">
-<div>
-<h2>Atendimento principal — Esportes</h2>
-<p class="muted">Regras de acesso, vagas e requisitos determinam a percepção de clareza e justiça. Quando não comunicados com completude, elevam retrabalho.</p>
-</div>
-</div><div class="grid cols-2">
-<div class="card">
-<h3>Achados centrais</h3>
-<ul class="bul">
-<li>Regras temporais e de demanda (ex.: “primeiro dia útil do mês”) são determinantes do desfecho.</li>
-<li>Informação incompleta sobre requisitos (ex.: avaliação/documentação) impacta “clareza”.</li>
-<li>Encerramento é alto quando há síntese e próximos passos.</li>
-</ul>
-</div>
-<div class="card">
-<h3>O que precisa virar padrão</h3>
-<ul class="bul">
-<li><b>Roteiro mínimo</b>: requisitos, documentos, prazos, alternativas e exceções.</li>
-<li><b>Material de pré-fila</b>: regras e perguntas frequentes com exemplos.</li>
-<li><b>WhatsApp</b>: respostas-padrão e triagem para reduzir deslocamentos desnecessários.</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — etapas da jornada"><div class="titleRow">
-<div>
-<h2>Atendimento principal — Saúde</h2>
-<p class="muted">Domínio do processo e segurança sustentam notas altas. A margem de melhoria concentra-se em previsibilidade de agenda e pontualidade.</p>
-</div>
-</div><div class="grid cols-2">
-<div class="card">
-<h3>Achados centrais</h3>
-<ul class="bul">
-<li>Orientação clara e consistente sustenta avaliações máximas em clareza e domínio do processo.</li>
-<li>Integração entre canais (Portal/Sistema + WhatsApp) reforça confiança e confirmação.</li>
-<li>Um caso com nota inferior em tempo aponta sensibilidade a atrasos/agenda.</li>
-</ul>
-</div>
-<div class="card">
-<h3>O que precisa virar padrão</h3>
-<ul class="bul">
-<li>Protocolo de <b>gestão de atraso</b>: limiar, comunicação e alternativas.</li>
-<li>Mensagens de expectativa realista (tempo e próximos passos) no WhatsApp.</li>
-<li>Monitoramento de pontualidade e tempo de espera.</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Resultados — etapas da jornada"><div class="titleRow">
-<div>
-<h2>Pós-atendimento (encerramento e confirmação)</h2>
-<p class="muted">Encerramento consistente reduz dúvidas e retornos. Em Saúde, o reforço por WhatsApp contribui para segurança.</p>
-</div>
-</div><div class="grid cols-2">
-<div class="card">
-<h3>Esportes</h3>
-<ul class="bul">
-<li>Quando registrado, o encerramento é bem avaliado (síntese + próximos passos).</li>
-<li>Oportunidade: padronizar mensagens de exceção (sem vaga, calendário, lista de espera).</li>
-</ul>
-</div>
-<div class="card">
-<h3>Saúde</h3>
-<ul class="bul">
-<li>Confirmação e comunicação entre canais reforçam confiança.</li>
-<li>Oportunidade: informar atrasos e alternativas de forma proativa.</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Momentos da verdade"><div class="card">
-<h2>Momentos da verdade (MDVs)</h2>
-<p class="muted">Cinco momentos concentram maior impacto na satisfação, esforço e probabilidade de retorno.</p>
-<div class="grid cols-2">
-<div class="card" style="background:rgba(255,255,255,.03)">
-<h3>MDV-1</h3><p>Clareza de regras e requisitos antes do deslocamento.</p>
-<h3>MDV-2</h3><p>Resolutividade do WhatsApp (orientar e encerrar demanda).</p>
-<h3>MDV-3</h3><p>Gestão de espera e comunicação durante fila/picos.</p>
-</div>
-<div class="card" style="background:rgba(255,255,255,.03)">
-<h3>MDV-4</h3><p>Roteiro mínimo de orientação (regras, requisitos, alternativas).</p>
-<h3>MDV-5</h3><p>Encerramento com próximos passos e confirmação.</p>
-</div>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Incidentes críticos"><div class="grid cols-2">
-<div class="card">
-<h2>Incidentes críticos positivos (IC+)</h2>
-<ul class="bul">
-<li>Atendimento cordial e didático (acolhimento + explicação).</li>
-<li>Confirmação e comunicação entre canais (Saúde).</li>
-<li>Encaminhamento final consistente (próximos passos).</li>
-</ul>
-</div>
-<div class="card">
-<h2>Incidentes críticos negativos (IC-)</h2>
-<ul class="bul">
-<li>Informação incompleta sobre requisitos/regras (Esportes).</li>
-<li>Ritmo apressado/menor paciência em etapa transacional (Esportes).</li>
-<li>Previsibilidade de agenda e cumprimento de horário (Saúde).</li>
-<li>Baixa resolutividade do WhatsApp em Esportes/Lazer.</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Diagnóstico causal"><div class="titleRow">
-<div>
-<h2>Diagnóstico causal (Pessoas–Processos–Canais–Capacidade)</h2>
-<p class="muted">A experiência é moldada pela interação entre capacidade e canais (esforço) e pessoas e processos (qualidade e resolução).</p>
-</div>
-</div><div class="grid cols-2">
-<div class="card">
-<h3>Pessoas</h3>
-<ul class="bul">
-<li>Acolhimento é ativo; risco de oscilação sob pressão.</li>
-<li>Treinamento e mentoria para picos reduzem variabilidade.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Processos</h3>
-<ul class="bul">
-<li>Roteiro mínimo e listas de verificação reduzem retrabalho.</li>
-<li>Mensagens de exceção (sem vaga/agenda distante) preservam confiança.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Canais</h3>
-<ul class="bul">
-<li>Saúde: integração reforça confiança.</li>
-<li>Esportes: WhatsApp pouco resolutivo aumenta presencialidade.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Capacidade</h3>
-<ul class="bul">
-<li>Picos e lotação amplificam fricções em Esportes.</li>
-<li>Atrasos/agenda afetam previsibilidade em Saúde.</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Recomendações"><div class="card">
-<h2>Plano de ação em três ondas</h2>
-<div class="grid cols-3">
-<div class="card" style="background:rgba(255,255,255,.03)">
-<h3>0–30 dias</h3>
-<ul class="bul">
-<li><b>AI-1</b> Roteiro mínimo (presencial e WhatsApp).</li>
-<li><b>AI-2</b> Perguntas frequentes e regras de Esportes.</li>
-<li><b>AI-3</b> WhatsApp: mensagens-padrão + árvore de encaminhamento.</li>
-<li><b>AI-4</b> Protocolo de espera (balcão).</li>
-</ul>
-</div>
-<div class="card" style="background:rgba(255,255,255,.03)">
-<h3>30–90 dias</h3>
-<ul class="bul">
-<li><b>T-1</b> Governança de conteúdo entre canais.</li>
-<li><b>T-2</b> Mentoria para picos (Esportes).</li>
-<li><b>T-3</b> Protocolo de exceções (vagas/agenda).</li>
-<li><b>T-4</b> Fluxo e sinalização em dias críticos.</li>
-<li><b>T-5</b> Protocolo de atrasos em Saúde.</li>
-</ul>
-</div>
-<div class="card" style="background:rgba(255,255,255,.03)">
-<h3>90+ dias</h3>
-<ul class="bul">
-<li><b>E-1</b> Evolução digital para Esportes.</li>
-<li><b>E-2</b> Painel de indicadores operacionais.</li>
-<li><b>E-3</b> Revisão de capacidade/agenda e calendário.</li>
-</ul>
-</div>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Recomendações"><div class="titleRow">
-<div>
-<h2>Ações imediatas (0–30 dias)</h2>
-<p class="muted">Quatro ações atacam as fricções mais recorrentes com alto impacto e baixo esforço relativo.</p>
-</div>
-</div><div class="grid cols-2">
-<div class="card">
-<h3>AI-1 · Roteiro mínimo</h3>
-<p>Lista de verificação do que sempre informar por segmento e canal.</p>
-</div>
-<div class="card">
-<h3>AI-2 · Regras de Esportes</h3>
-<p>Página única com calendário, critérios, documentos e alternativas (perguntas frequentes).</p>
-</div>
-<div class="card">
-<h3>AI-3 · WhatsApp resolutivo</h3>
-<p>Mensagens-padrão e árvore de encaminhamento (o que resolve ali vs presencial).</p>
-</div>
-<div class="card">
-<h3>AI-4 · Protocolo de espera</h3>
-<p>Comunicação de fila/tempo, ordem e próximos passos; reforço de foco operacional.</p>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Recomendações"><div class="card">
-<h2>Priorização (Impacto × Esforço)</h2>
-<p class="muted">A priorização organiza iniciativas por impacto na experiência e esforço de implementação.</p>
-<table><thead><tr><th>Iniciativa</th><th>Impacto</th><th>Esforço</th><th>Prazo</th><th class="num">Prioridade</th></tr></thead><tbody><tr><td>AI-1 Roteiro mínimo por segmento/canal</td><td>Alto</td><td>Baixo</td><td>0–30 dias</td><td class="num">1</td></tr><tr><td>AI-2 Página única regras Esportes (perguntas frequentes)</td><td>Alto</td><td>Baixo–Médio</td><td>0–30 dias</td><td class="num">2</td></tr><tr><td>AI-3 WhatsApp: mensagens-padrão + árvore</td><td>Médio–Alto</td><td>Baixo–Médio</td><td>0–30 dias</td><td class="num">3</td></tr><tr><td>AI-4 Protocolo de espera (balcão)</td><td>Médio</td><td>Baixo</td><td>0–30 dias</td><td class="num">4</td></tr><tr><td>T-3 Protocolo de exceções (vagas/agenda)</td><td>Alto</td><td>Médio</td><td>30–90 dias</td><td class="num">5</td></tr><tr><td>T-2 Mentoria para picos (Esportes)</td><td>Médio–Alto</td><td>Médio</td><td>30–90 dias</td><td class="num">6</td></tr><tr><td>T-5 Protocolo de atrasos (Saúde)</td><td>Médio–Alto</td><td>Médio</td><td>30–90 dias</td><td class="num">7</td></tr><tr><td>T-1 Governança de conteúdo entre canais</td><td>Médio</td><td>Médio</td><td>30–90 dias</td><td class="num">8</td></tr><tr><td>T-4 Fluxo e sinalização em dias críticos</td><td>Médio–Alto</td><td>Médio</td><td>30–90 dias</td><td class="num">9</td></tr><tr><td>E-2 Painel de indicadores</td><td>Médio–Alto</td><td>Médio–Alto</td><td>90+ dias</td><td class="num">10</td></tr><tr><td>E-1 Evolução digital Esportes</td><td>Alto</td><td>Alto</td><td>90+ dias</td><td class="num">11</td></tr><tr><td>E-3 Revisão capacidade/agenda/calendário</td><td>Alto</td><td>Alto</td><td>90+ dias</td><td class="num">12</td></tr></tbody></table>
-</div></section><section class="slide" data-stage="cs" data-title="Monitoramento"><div class="grid cols-2">
-<div class="card">
-<h2>Indicadores recomendados</h2>
-<h3>Experiência e resolutividade</h3>
-<ul class="bul">
-<li>% atendimentos com roteiro mínimo aplicado (auditoria amostral).</li>
-<li>% demandas resolvidas no primeiro contato (por canal).</li>
-<li>% retornos por falta de informação (motivo classificado).</li>
-</ul>
-<h3>Tempo e capacidade</h3>
-<ul class="bul">
-<li>Tempo médio de espera no presencial (pico vs fora de pico).</li>
-<li>Pontualidade em Saúde (% atrasos &gt; 15 min).</li>
-<li>Volume por canal (portal/aplicativo, WhatsApp, presencial).</li>
-</ul>
-</div>
-<div class="card">
-<h2>Integração entre canais</h2>
-<ul class="bul">
-<li>% conteúdos críticos consistentes entre canais (verificação editorial).</li>
-<li>Taxa de redirecionamento WhatsApp → presencial por motivo.</li>
-</ul>
-<div class="callout">
-<b>Governança:</b> iniciar semanalmente (primeiro mês) e migrar para mensal após estabilização do roteiro mínimo.
-    </div>
-</div>
-</div></section><section class="slide" data-stage="cs" data-title="Como começar"><div class="card">
-<h2>Como começar na prática (primeira semana)</h2>
-<ol style="margin:10px 0 0 18px; color:var(--fg);">
-<li>Aprovar o <b>roteiro mínimo</b> (1 página) para Saúde e Esportes, com versões presencial e WhatsApp.</li>
-<li>Configurar mensagens-padrão do WhatsApp e fixar a versão curta do roteiro no balcão.</li>
-<li>Treinar a equipe (30–45 min) com ênfase em requisitos, regras de vaga/agenda e encerramento com próximos passos.</li>
-<li>Supervisão amostral (10 atendimentos/semana): “aplicou o roteiro? sim/não” + principal motivo de dúvida.</li>
-<li>Ajustar perguntas frequentes e mensagens de exceção com base nos motivos de retorno.</li>
-</ol>
-<div class="callout">
-<b>Encerramento:</b> não há slide de agradecimento; ao avançar, o painel retorna automaticamente ao Hub.
-  </div>
-</div></section><section class="slide" data-stage="quantCliTel" data-title="Capa"><div class="titleRow">
-<div>
-<h1>Quanti Clientes (Telefone)</h1>
-<h3>Unidade Sesc DF 504 Sul · Etapa em desenvolvimento</h3>
-<div class="spacer"></div>
-<div class="tag ok">Conteúdo em desenvolvimento</div>
-<div class="spacer"></div>
-<p class="muted">Espaço reservado para a etapa quantitativa com clientes por telefone.</p>
-</div>
-<div class="right"><a class="btnPdfInline disabled" href="#" target="_blank" rel="noopener">PDF em elaboração</a></div>
-
-</div></section><section class="slide" data-stage="quantCliTel" data-title="Em desenvolvimento"><div class="grid cols-2">
-<div class="card">
-<h2>Conteúdo em desenvolvimento</h2>
-<p class="muted">Inclua aqui: base, perfil, resultados-chave, segmentações e recomendações.</p>
-<div class="callout">
-<b>Como usar:</b> esta etapa está publicada como espaço reservado. Substitua estes slides quando o conteúdo estiver pronto.
-    </div>
-</div>
-<div class="card">
-<h3>O que entra aqui</h3>
-<ul class="bul">
-<li>Contexto e base (quem, quando, como).</li>
-<li>Resultados (quadros, gráficos e destaques).</li>
-<li>Recomendações (priorização e próximos passos).</li>
-</ul>
-</div>
-</div></section><section class="slide" data-stage="qualInt" data-title="Capa"><div class="titleRow">
-<div>
-<h1>Quali Colaboradores</h1>
-<h3>Unidade Sesc DF 504 Sul · Entrevistas em profundidade · Jan/2026</h3>
-<div class="spacer"></div>
-<div class="tag ok">Base analisada: n=10 (Saúde=5 · Esportes=5)</div>
-<div class="spacer"></div>
-<p class="muted">Síntese qualitativa interna com foco em jornada percebida, fluxos, integração, sistemas e oportunidades de padronização.</p>
-</div>
-<div class="right"><a class="btnPdfInline" href="Etapa2%264_Quali_EP.pdf" download target="_blank" rel="noopener">Baixar PDF</a></div>
-
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Contexto e método"><div class="grid cols-2">
-<div class="card">
-<h2>Contexto e método</h2>
-<ul class="bul">
-<li><b>Técnica:</b> entrevistas em profundidade (60 min em média).</li>
-<li><b>Segmentos:</b> Saúde e Esportes (n=5 por segmento).</li>
-<li><b>Foco analítico:</b> como a jornada é percebida internamente e onde ajustes operacionais podem fortalecer consistência.</li>
-</ul>
-<div class="divider"></div>
-<div class="callout"><b>Como usar:</b> esta etapa explica causas internas para fricções percebidas por clientes, especialmente em agendamento, acessos e variabilidade de atendimento.</div>
-</div>
-<div class="card">
-<h3>Princípios de leitura</h3>
-<ul class="bul">
-<li>Avaliar <b>consistência</b> (padrão mínimo) e <b>capacidade</b> (picos, limitações).</li>
-<li>Separar problema de <b>processo</b> vs <b>sistema</b> vs <b>comunicação</b>.</li>
-<li>Conectar achados a ações: quick wins e melhorias estruturais.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Síntese"><div class="titleRow"><div>
-<h2>Síntese executiva</h2>
-<p class="muted">Principais aprendizados a partir das entrevistas com colaboradores.</p>
-</div></div>
-<div class="grid cols-2">
-<div class="card">
-<h3>Clima e identidade</h3>
-<ul class="bul">
-<li>Avaliação positiva do trabalho no Sesc (propósito social, equipe preparada, estrutura adequada).</li>
-<li>Jornada é vista como <b>segura, acolhedora, organizada e contínua</b> — “cuidado sustentado”, não “impacto”.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Fragilidades mais citadas</h3>
-<ul class="bul">
-<li>Dificuldade pontual de acesso a vagas (especialidades/horários disputados).</li>
-<li>Dependência do presencial para parte do público (especialmente idosos).</li>
-<li>Dificuldades de uso dos meios digitais por clientes mais idosos.</li>
-<li>Gargalos pontuais de capacidade e gestão de expectativas no agendamento.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Jornada"><h2>Como a jornada é percebida internamente</h2>
-<p class="muted">Elementos recorrentes na fala dos colaboradores.</p>
-<div class="grid cols-2">
-<div class="card">
-<h3>Drivers positivos</h3>
-<ul class="bul">
-<li><b>Acolhimento e cuidado</b>: atenção, respeito, paciência, humanização.</li>
-<li><b>Organização e estrutura</b>: orientação, clareza e funcionamento percebido como organizado.</li>
-<li><b>Confiança e segurança</b>: credibilidade, tranquilidade, especialmente em Saúde.</li>
-<li><b>Continuidade e vínculo</b>: acompanhamento e retorno (jornada não episódica).</li>
-</ul>
-</div>
-<div class="card">
-<h3>Pontos de atenção</h3>
-<ul class="bul">
-<li><b>Vagas</b> e limitações de agenda em horários disputados.</li>
-<li><b>Inclusão geracional</b>: apoio constante para clientes idosos.</li>
-<li><b>Digital</b>: dificuldades de adoção e necessidade de orientação.</li>
-</ul>
-<div class="divider"></div>
-<div class="note"><b>Leitura:</b> desafios são percebidos como operacionais/adaptativos, não como falhas estruturais graves.</div>
-</div>
-</div>
-</section>
-
-<section class="slide" data-stage="qualInt" data-title="Jornada"><div class="grid cols-2">
-<div class="card">
-<h2>Pontos fortes vs fragilidades (síntese)</h2>
-<table>
-<thead><tr><th>Pontos fortes</th><th>Fragilidades percebidas</th></tr></thead>
-<tbody>
-<tr><td>Atendimento acolhedor e humanizado</td><td>Dificuldade pontual de acesso a vagas (especialidades / horários)</td></tr>
-<tr><td>Proximidade entre equipe e clientes</td><td>Dependência do presencial para parte do público</td></tr>
-<tr><td>Orientação clara ao longo da jornada</td><td>Dificuldades no uso de meios digitais por clientes idosos</td></tr>
-<tr><td>Confiança na equipe técnica</td><td>Necessidade de maior apoio na etapa de agendamento</td></tr>
-<tr><td>Ambiente organizado e estruturado</td><td>Gargalos pontuais associados à capacidade de atendimento</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Implicação para gestão</h3>
-<div class="callout"><b>Prioridade:</b> reduzir “dependência do presencial” por falta de resolutividade do digital, sem perder o padrão humano que sustenta a imagem institucional.</div>
-<ul class="bul">
-<li>Regras claras + mensagens padrão + orientação assistida.</li>
-<li>Capacidade e previsibilidade (agenda e vagas) como foco de governança.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Fluxos"><div class="grid cols-2">
-<div class="card">
-<h2>Fluxos internos e processo de trabalho</h2>
-<p class="muted">Em geral, fluxos não aparecem como queixa recorrente — com exceções pontuais.</p>
-<ul class="bul">
-<li><b>Esportes:</b> fluxos mais simples e diretos; menor volume de registros formais.</li>
-<li><b>Saúde (especialmente Odontologia):</b> maior complexidade e repetição de registros (sistemas + controles manuais/planilhas), gerando retrabalho pontual.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Oportunidade de padronização</h3>
-<ul class="bul">
-<li>Mapear pontos de duplicidade de registro e reduzir “dupla digitação”.</li>
-<li>Definir padrão mínimo de informação que acompanha a demanda (handoff) entre áreas.</li>
-</ul>
-<div class="divider"></div>
-<div class="note"><b>Ganho esperado:</b> mais tempo de atendimento e menos fricção administrativa, sobretudo em Saúde.</div>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Integração"><div class="grid cols-2">
-<div class="card">
-<h2>Integração das áreas</h2>
-<ul class="bul">
-<li>Não surgem conflitos entre áreas nem ruídos graves de comunicação interna.</li>
-<li>Facilitadores citados: grupos de WhatsApp, abertura ao diálogo com lideranças e reuniões periódicas.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Ponto de melhoria</h3>
-<ul class="bul">
-<li>Menor visibilidade de programações e conteúdos de outras áreas (ex.: cultural), limitando percepção do Sesc como oferta integrada.</li>
-<li>Oportunidade de ampliar circulação e apropriação das iniciativas entre áreas.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Comunicação"><div class="grid cols-2">
-<div class="card">
-<h2>Comunicação</h2>
-<p class="muted">Não há crítica forte à comunicação operacional do dia a dia.</p>
-<ul class="bul">
-<li>Alinhamento bom dentro dos setores.</li>
-<li>Uso combinado de WhatsApp, e-mail corporativo e reuniões.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Gap relevante</h3>
-<div class="callout"><b>Síntese:</b> bom alinhamento setorial, porém menor familiaridade com ações e serviços fora do próprio eixo — reduz a capacidade de “ofertar o Sesc como sistema”.</div>
-<ul class="bul">
-<li>Organizar uma camada de comunicação “institucional integrada” (não apenas operacional).</li>
-<li>Dar visibilidade a programação e serviços para fortalecer orientação ao cliente.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Sistemas"><div class="grid cols-2">
-<div class="card">
-<h2>Ferramentas, sistemas e recursos</h2>
-<ul class="bul">
-<li>Entraves descritos como <b>pontuais</b>.</li>
-<li>Destaque para <b>biometria facial</b> (dificuldade com público idoso ou dados incorretos), mais citada em Esportes; pode gerar constrangimento.</li>
-<li>Em Saúde (Odontologia), menção a planilhas paralelas para registro (retrabalho pontual).</li>
-</ul>
-</div>
-<div class="card">
-<h3>Implicações</h3>
-<ul class="bul">
-<li>Revisar jornada de acesso/biometria considerando perfis sensíveis (idosos) e rotas de exceção.</li>
-<li>Priorizar integração de sistemas onde há duplicidade de registro.</li>
-</ul>
-<div class="divider"></div>
-<div class="note"><b>Objetivo:</b> reduzir fricção de acesso e custo de operação sem comprometer controle.</div>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Desenvolvimento"><div class="grid cols-2">
-<div class="card">
-<h2>Treinamento e capacitação</h2>
-<p class="muted">Percebido de forma unânime como adequado e valorizado.</p>
-<ul class="bul">
-<li><b>Cuidado institucional:</b> preparo, orientação e atualização para o desempenho.</li>
-<li><b>Confiança e pertencimento:</b> inclusão, alinhamento e vínculo institucional.</li>
-<li><b>Valorização do trabalhador:</b> reconhecimento do profissional e da pessoa.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Oportunidade de foco</h3>
-<ul class="bul">
-<li>Treinamentos direcionados a <b>mensagens padrão</b> e <b>orientação assistida</b> (idosos/digital).</li>
-<li>Rotinas rápidas de alinhamento interáreas para reforçar visão integrada de ofertas.</li>
-</ul>
-</div>
-</div></section>
-
-<section class="slide" data-stage="qualInt" data-title="Oportunidades"><div class="grid cols-2">
-<div class="card">
-<h2>Oportunidades identificadas</h2>
-<ul class="bul">
-<li>Fortalecer <b>comunicação institucional integrada</b> (visibilidade de programação e serviços para clientes e colaboradores).</li>
-<li>Aprimorar <b>integração entre sistemas</b>, especialmente em Saúde, reduzindo registros paralelos.</li>
-<li>Ajustar <b>processos operacionais</b> (biometria facial) considerando perfis sensíveis, sobretudo idosos.</li>
-<li>Desenvolver <b>campanhas educativas</b> para uso dos canais digitais, sem perder atendimento humanizado.</li>
-</ul>
-<div class="divider"></div>
-<div class="callout"><b>Princípio:</b> modernização e inovação como complemento à base humana e à coletividade.</div>
-</div>
-<div class="card">
-<h3>Encerramento</h3>
-<p class="muted">Ao avançar após este slide, o painel retorna automaticamente ao Hub.</p>
-<ul class="bul">
-<li>Use os marcos do rodapé para navegar (Síntese, Jornada, Fluxos, Comunicação, Sistemas, Desenvolvimento, Oportunidades).</li>
-<li>Para aprofundamento, consulte o material completo anexo (PPT/PDF).</li>
-</ul>
-</div>
-</div></section>
-<section class="slide" data-stage="funcCenso" data-title="Capa">
-<div class="titleRow">
-<div>
-<h1>Pesquisa Quantitativa com Colaboradores (Censo)</h1>
-<h3>Unidade Sesc DF 504 Sul · Etapa de diagnóstico interno</h3>
-<div class="spacer"></div>
-<div class="tag ok">Base analisada: n=87</div>
-<div class="spacer"></div>
-<p class="muted">Esta apresentação traduz resultados, implicações para a jornada do cliente e recomendações priorizadas.</p>
-</div>
-<div class="right">
-<div class="tag">Projeto PR2025_508_SESC_CLIENTES</div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Roteiro e storytelling">
-<h2>Roteiro da apresentação: do diagnóstico ao plano de ação</h2>
-<div class="card">
-<div class="timeline">
-<div class="step active" data-go="4">
-<div class="t">1) Contexto e leitura</div>
-<div class="d">Objetivo, critérios de leitura, base e perfil.</div>
-</div>
-<div class="step" data-go="7">
-<div class="t">2) O que está forte</div>
-<div class="d">Clima, satisfação, colaboração, qualidade e processos.</div>
-</div>
-<div class="step" data-go="14">
-<div class="t">3) Onde a continuidade se rompe</div>
-<div class="d">Transições entre áreas, encaminhamentos e comunicação.</div>
-</div>
-<div class="step" data-go="25">
-<div class="t">4) Recomendações priorizadas</div>
-<div class="d">Ações 0–30, 30–90, 90+ e indicadores de monitoramento.</div>
-</div>
-</div>
-<div class="divider"></div>
-<div class="callout">
-<b>Tese central:</b> o ambiente interno é favorável e a entrega é bem avaliada; o ganho está em <b>reduzir variação nas transições</b> (encaminhamento, comunicação e devolutivas) para aumentar consistência na jornada do cliente.
+          <div class="card-footer">
+            <div class="card-tags">
+              <span class="tag">12 entrevistas</span>
+              <span class="tag">6 por segmento</span>
+            </div>
+            <a class="pdf-pill" href="Etapa2&4_Quali_EP.pdf" download onclick="event.stopPropagation();" data-tooltip="Baixar relatório (PDF)" aria-label="Baixar relatório (PDF)">⬇</a>
+          </div>
         </div>
-<div class="small" style="margin-top:10px">Dica: clique em um bloco para ir direto à seção correspondente.</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Objetivo">
-<h2>Objetivo da etapa</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>O que foi medido</h3>
-<ul>
-<li>Percepções internas sobre condições que sustentam a experiência do cliente: comunicação, alinhamento, fluxos e integração entre áreas/canais.</li>
-<li>Condições para execução do trabalho (capacidade) e leitura interna da qualidade do atendimento.</li>
-<li>Temas recorrentes nas respostas abertas (melhorias e fatores importantes).</li>
-</ul>
-</div>
-<div class="card">
-<h3>Por que isso importa</h3>
-<p>Onde há variação de orientação, fluxo e capacidade, cresce a probabilidade de:</p>
-<ul>
-<li>informações divergentes e necessidade de “confirmar com alguém”;</li>
-<li>retrabalho e “vai-e-volta” do cliente;</li>
-<li>aumento do tempo total da jornada e sensação de descontinuidade.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Como ler">
-<h2>Como ler os resultados</h2>
-<div class="grid cols-3">
-<div class="card">
-<div class="kpi">
-<div class="label">Avaliação positiva</div>
-<div class="value">Q9</div>
-<div class="sub">Muito positivo + Positivo</div>
-</div>
-</div>
-<div class="card">
-<div class="kpi">
-<div class="label">Concordância</div>
-<div class="value">Q13–Q15</div>
-<div class="sub">Concordo totalmente + Concordo</div>
-</div>
-</div>
-<div class="card">
-<div class="kpi">
-<div class="label">Frequência alta</div>
-<div class="value">Q10 / Q12</div>
-<div class="sub">Sempre + Quase sempre</div>
-</div>
-</div>
-</div>
-<div class="divider"></div>
-<div class="note">
-<b>Notas importantes:</b>
-<ul>
-<li>Leitura descritiva (levantamento censitário) e gerencial.</li>
-<li>Algumas perguntas têm <b>n aplicável</b> distinto por roteamento (ex.: Esportes n=2).</li>
-</ul>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Base e agrupamentos">
-<h2>Base e agrupamentos analíticos</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Distribuição por agrupamento</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">n</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Saúde (Bucal + Física)</td><td class="num">39</td><td class="num">44,8</td></tr>
-<tr><td>Esportes (Esportes + DFEL)</td><td class="num">12</td><td class="num">13,8</td></tr>
-<tr><td>Outras áreas que atendem clientes</td><td class="num">29</td><td class="num">33,3</td></tr>
-<tr><td>Outras áreas que não atendem clientes</td><td class="num">7</td><td class="num">8,0</td></tr>
-</tbody>
-</table>
-<div class="small" style="margin-top:8px">Total: 87 respondentes.</div>
-</div>
-<div class="card">
-<h3>Vínculo com atendimento</h3>
-<div class="grid cols-2">
-<div class="kpi"><div class="label">Atende clientes</div><div class="value">92,0%</div><div class="sub">80 de 87</div></div>
-<div class="kpi"><div class="label">Não atende clientes</div><div class="value">8,0%</div><div class="sub">7 de 87</div></div>
-</div>
-<div class="divider"></div>
-<p class="muted">As análises por fluxo (Q3) consideram apenas quem atende clientes (n aplicável = 80).</p>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Perfil">
-<h2>Perfil: tempo de atuação e faixa etária</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Tempo de atuação (Q19)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">n</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Menos de 6 meses</td><td class="num">10</td><td class="num">11,5</td></tr>
-<tr><td>6 meses a 1 ano</td><td class="num">10</td><td class="num">11,5</td></tr>
-<tr><td>1 a 3 anos</td><td class="num">22</td><td class="num">25,3</td></tr>
-<tr><td>3 a 5 anos</td><td class="num">13</td><td class="num">14,9</td></tr>
-<tr><td>Mais de 5 anos</td><td class="num">32</td><td class="num">36,8</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Faixa etária (Q20)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">n</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>18–24</td><td class="num">5</td><td class="num">5,7</td></tr>
-<tr><td>25–34</td><td class="num">17</td><td class="num">19,5</td></tr>
-<tr><td>35–44</td><td class="num">23</td><td class="num">26,4</td></tr>
-<tr><td>45–59</td><td class="num">32</td><td class="num">36,8</td></tr>
-<tr><td>Prefere não informar</td><td class="num">10</td><td class="num">11,5</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="small">Observação: uso gerencial e descritivo (sem atribuições determinísticas).</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Painel">
-<h2>Painel de indicadores gerais</h2>
-<div class="grid cols-3">
-<div class="card"><div class="kpi"><div class="label">Clima positivo (Q9)</div><div class="value">94,3%</div><div class="sub">82/87</div></div></div>
-<div class="card"><div class="kpi"><div class="label">Colaboração alta (Q10)</div><div class="value">96,6%</div><div class="sub">84/87</div></div></div>
-<div class="card"><div class="kpi"><div class="label">Condições de trabalho (Q12)</div><div class="value">90,8%</div><div class="sub">79/87</div></div></div>
-<div class="card"><div class="kpi"><div class="label">Qualidade do atendimento (Q13)</div><div class="value">97,7%</div><div class="sub">85/87</div></div></div>
-<div class="card"><div class="kpi"><div class="label">Processos claros (Q14)</div><div class="value">92,0%</div><div class="sub">80/87</div></div></div>
-<div class="card"><div class="kpi"><div class="label">Comunicação interna (Q15)</div><div class="value">83,9%</div><div class="sub">73/87</div></div></div>
-</div>
-<div class="divider"></div>
-<div class="grid cols-2">
-<div class="card">
-<div class="kpi"><div class="label">Fluxo entre áreas eficiente (Q3)</div><div class="value">77,5%</div><div class="sub">62/80 · n aplicável (atende clientes)</div></div>
-</div>
-<div class="card">
-<div class="kpi"><div class="label">Satisfação em trabalhar (Q16)</div><div class="value">média 9,4</div><div class="sub">82,8% com nota 9–10</div></div>
-</div>
-</div>
-<div class="callout" style="margin-top:14px">
-<b>Leitura principal:</b> os indicadores são elevados; o ponto de atenção transversal é a <b>continuidade do atendimento</b> quando o cliente transita entre áreas (Q3) e a <b>dispersão</b> em comunicação (Q15).
-      </div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Clima (Q9)">
-<h2>Clima de trabalho é fortemente positivo (Q9)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Distribuição das respostas</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">n</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Muito positivo</td><td class="num">43</td><td class="num">49,4</td></tr>
-<tr><td>Positivo</td><td class="num">39</td><td class="num">44,8</td></tr>
-<tr><td>Neutro</td><td class="num">5</td><td class="num">5,7</td></tr>
-</tbody>
-</table>
-<div class="small" style="margin-top:8px">Avaliação positiva (muito positivo + positivo): 94,3%.</div>
-</div>
-<div class="card">
-<h3>Leitura gerencial</h3>
-<ul>
-<li>Clima positivo é um ativo para sustentação de padrão.</li>
-<li>Permite apoiar melhorias sem deteriorar a experiência interna.</li>
-<li>Recomendação: preservar rituais e práticas que sustentam o ambiente.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Satisfação (Q16)">
-<h2>Satisfação é alta, com variação entre agrupamentos (Q16)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Resultados por agrupamento</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">Nota média</th><th class="num">% nota 9–10</th></tr></thead>
-<tbody>
-<tr><td>Saúde (Bucal + Física)</td><td class="num">9,67</td><td class="num">92,3</td></tr>
-<tr><td>Esportes (Esportes + DFEL)</td><td class="num">9,00</td><td class="num">66,7</td></tr>
-<tr><td>Outras áreas que atendem clientes</td><td class="num">9,24</td><td class="num">75,9</td></tr>
-<tr><td>Outras áreas que não atendem clientes</td><td class="num">9,43</td><td class="num">85,7</td></tr>
-</tbody>
-</table>
-<div class="small" style="margin-top:8px">Leitura: a coluna “% nota 9–10” ajuda a visualizar concentração no topo da escala.</div>
-</div>
-<div class="card">
-<h3>Leitura gerencial</h3>
-<ul>
-<li>A satisfação é elevada em todos os agrupamentos.</li>
-<li>Diferenças devem ser lidas com cautela, especialmente em agrupamentos menores.</li>
-<li>O indicador é útil como monitoramento de ambiente interno e risco de desgaste.</li>
-</ul>
-<div class="note" style="margin-top:14px">
-<b>Cautela de leitura:</b> diferenças devem ser interpretadas de forma gerencial, considerando o tamanho do agrupamento.
+
+        <div class="card card-3" onclick="navigateToStage(3)">
+          <div>
+            <div class="card-top">
+              <span class="card-badge">Etapa 3</span>
+              <span class="card-icon">📊</span>
+            </div>
+            <h2 class="card-title">Quanti Clientes</h2>
+            <p class="card-description">Entrevistas por telefone com clientes (métricas e recortes).</p>
           </div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Colaboração (Q10)">
-<h2>Colaboração entre colegas é um ativo institucional (Q10)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Frequência alta de colaboração (Q10)</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% sempre + quase sempre</th></tr></thead>
-<tbody>
-<tr><td>Saúde (Bucal + Física)</td><td class="num">97,4</td></tr>
-<tr><td>Esportes (Esportes + DFEL)</td><td class="num">100,0</td></tr>
-<tr><td>Outras áreas que atendem clientes</td><td class="num">93,1</td></tr>
-<tr><td>Outras áreas que não atendem clientes</td><td class="num">100,0</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Implicação</h3>
-<ul>
-<li>Colaboração alta facilita implantação de padrões mínimos (encaminhamento, atualização e devolutivas).</li>
-<li>Também reduz risco de dependência de indivíduos quando há rotinas claras e registro.</li>
-</ul>
-<div class="callout" style="margin-top:14px">
-<b>Implicação:</b> colaboração alta facilita implantação de padrões mínimos (encaminhamento, atualização, devolutivas).
+
+          <div class="card-footer">
+            <div class="card-tags">
+              <span class="tag">500 entrevistas</span>
+              <span class="tag">~250 por segmento</span>
+            </div>
+            <a class="pdf-pill" href="Etapa3_Quanti_Clientes.pdf" download onclick="event.stopPropagation();" data-tooltip="Baixar relatório (PDF)" aria-label="Baixar relatório (PDF)">⬇</a>
           </div>
-</div>
-</div>
-</section>
-<!-- A partir daqui, o conteúdo permanece funcionalmente equivalente ao anterior (tabelas + barras + perguntas). -->
-<section class="slide" data-stage="funcCenso" data-title="Qualidade e processos">
-<h2>Qualidade percebida é muito alta; processos são bem avaliados</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Atendimento de qualidade (Q13)</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% concordância</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">100,0</td></tr>
-<tr><td>Esportes</td><td class="num">100,0</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">93,1</td></tr>
-<tr><td>Outras áreas que não atendem</td><td class="num">100,0</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Processos organizados e claros (Q14)</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% concordância</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">94,9</td></tr>
-<tr><td>Esportes</td><td class="num">91,7</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">93,1</td></tr>
-<tr><td>Outras áreas que não atendem</td><td class="num">71,4</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="small">Leitura gerencial: observar respostas intermediárias/discordantes como sinais de variação, especialmente em transições entre áreas.</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Comunicação (Q15)">
-<h2>Comunicação interna é bem avaliada, porém com maior dispersão (Q15)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Concordância por agrupamento</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% concordância</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">87,2</td></tr>
-<tr><td>Esportes</td><td class="num">75,0</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">82,8</td></tr>
-<tr><td>Outras áreas que não atendem</td><td class="num">85,7</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Por que é sensível</h3>
-<ul>
-<li>Comunicação atua como causa provável de inconsistência percebida pelo cliente.</li>
-<li>Falhas geram divergência de orientação e aumento de “confirmações”.</li>
-<li>Recomendação: fonte única + registro de mudanças + rituais curtos.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Condições (Q12)">
-<h2>Condições de trabalho são altas; oportunidades pontuais (Q12)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Frequência alta de condições favoráveis</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% sempre + quase sempre</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">94,9</td></tr>
-<tr><td>Esportes</td><td class="num">91,7</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">86,2</td></tr>
-<tr><td>Outras áreas que não atendem</td><td class="num">85,7</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Leitura gerencial</h3>
-<ul>
-<li>Indicador em patamar alto, útil como monitoramento de capacidade.</li>
-<li>Respostas intermediárias tendem a indicar gargalos localizados (sistema/infraestrutura ou organização).</li>
-</ul>
-<div class="callout" style="margin-top:14px">
-<b>Foco recomendado:</b> mapear impeditivos de sistema/infraestrutura que geram demora e retrabalho (e priorizar por impacto no atendimento).
+        </div>
+
+        <div class="card card-4" onclick="navigateToStage(4)">
+          <div>
+            <div class="card-top">
+              <span class="card-badge">Etapa 4</span>
+              <span class="card-icon">🧑‍💼</span>
+            </div>
+            <h2 class="card-title">Quali Colaboradores</h2>
+            <p class="card-description">Entrevistas em profundidade com colaboradores (Saúde e Esportes).</p>
           </div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Fluxo entre áreas (Q3)">
-<h2>Fluxo entre áreas é o principal ponto de atenção do painel (Q3)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Concordância por agrupamento</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% concordância</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">76,9</td></tr>
-<tr><td>Esportes</td><td class="num">83,3</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">75,9</td></tr>
-</tbody>
-</table>
-<div class="small" style="margin-top:8px">Somente quem atende clientes (n aplicável = 80).</div>
-</div>
-<div class="card">
-<h3>Implicação para a jornada</h3>
-<ul>
-<li>Encaminhamentos sem padrão mínimo aumentam retrabalho e tempo total.</li>
-<li>Risco de “fila invisível” (aguardando retorno interno).</li>
-<li>Cliente repete informações e percebe descontinuidade.</li>
-</ul>
-<div class="divider"></div>
-<div class="tag warn">Prioridade de ação: alta</div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Mapa da jornada interna">
-<h2>Resultados por etapa da jornada interna</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Etapas de leitura</h3>
-<ol class="muted" style="margin:10px 0 0 18px">
-<li><b>Informação e orientação</b> (antes do atendimento)</li>
-<li><b>Chegada, triagem e encaminhamentos</b></li>
-<li><b>Execução do atendimento/serviço</b></li>
-<li><b>Pós-atendimento</b> (devolutivas internas)</li>
-</ol>
-<div class="divider"></div>
-<p class="small">Onde há transição de responsabilidade, cresce o risco de variação e impacto ao cliente.</p>
-</div>
-<div class="card">
-<h3>Foco desta seção</h3>
-<ul>
-<li>Identificar evidências de variação por etapa.</li>
-<li>Mapear riscos operacionais e oportunidades de melhoria.</li>
-<li>Preparar base para recomendações priorizadas.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Informação e orientação">
-<h2>Antes do atendimento: domínio de rotinas é mais disperso em “Outras áreas que atendem”</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Conhece rotinas e orientações (Q1)</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% no critério</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">94,9</td></tr>
-<tr><td>Esportes</td><td class="num">83,3</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">72,4</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Clareza das orientações (Q2)</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% no critério</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">89,7</td></tr>
-<tr><td>Esportes</td><td class="num">100,0</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">93,1</td></tr>
-</tbody>
-</table>
-<div class="divider"></div>
-<div class="callout"><b>Ação típica:</b> ambientação + atualização periódica com foco em exceções e encaminhamentos.</div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Específicos Saúde/DFEL">
-<h2>Clareza de informação específica é alta, com espaço para elevar “muito claras”</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Saúde: informações necessárias (Q5S)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">n</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Muito claras</td><td class="num">19</td><td class="num">48,7</td></tr>
-<tr><td>Claras</td><td class="num">16</td><td class="num">41,0</td></tr>
-<tr><td>Razoavelmente claras</td><td class="num">4</td><td class="num">10,3</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>DFEL e Outras áreas: clareza (Q5A)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">DFEL (n=10)</th><th class="num">Outras áreas (n=29)</th></tr></thead>
-<tbody>
-<tr><td>Claras</td><td class="num">70,0</td><td class="num">55,2</td></tr>
-<tr><td>Muito claras</td><td class="num">30,0</td><td class="num">34,5</td></tr>
-<tr><td>Razoavelmente claras</td><td class="num">0,0</td><td class="num">10,3</td></tr>
-</tbody>
-</table>
-<div class="small">Percentuais dentro do grupo.</div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Encaminhamentos">
-<h2>Encaminhamentos: eficiência ao receber demandas tem respostas intermediárias (Q6A)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Saúde: fluxo de chegada/encaminhamento (Q6S)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">n</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Muito bem</td><td class="num">22</td><td class="num">56,4</td></tr>
-<tr><td>Bem</td><td class="num">14</td><td class="num">35,9</td></tr>
-<tr><td>Regular</td><td class="num">3</td><td class="num">7,7</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>DFEL e Outras áreas: receber demandas (Q6A)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">DFEL</th><th class="num">Outras áreas</th></tr></thead>
-<tbody>
-<tr><td>Muito eficiente</td><td class="num">30,0</td><td class="num">20,7</td></tr>
-<tr><td>Eficiente</td><td class="num">50,0</td><td class="num">58,6</td></tr>
-<tr><td>Regular</td><td class="num">20,0</td><td class="num">17,2</td></tr>
-<tr><td>Pouco eficiente</td><td class="num">0,0</td><td class="num">3,4</td></tr>
-</tbody>
-</table>
-<div class="callout" style="margin-top:12px"><b>Risco:</b> devolução de demanda, recontato e retrabalho.</div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Comunicação para execução">
-<h2>Comunicação interna para viabilizar o trabalho tem espaço de melhoria (Q7A)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>DFEL e Outras áreas: comunicação para viabilizar execução (Q7A)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">DFEL</th><th class="num">Outras áreas</th></tr></thead>
-<tbody>
-<tr><td>Atende totalmente</td><td class="num">30,0</td><td class="num">13,8</td></tr>
-<tr><td>Atende</td><td class="num">70,0</td><td class="num">62,1</td></tr>
-<tr><td>Atende parcialmente</td><td class="num">0,0</td><td class="num">20,7</td></tr>
-<tr><td>Atende pouco</td><td class="num">0,0</td><td class="num">3,4</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Leitura gerencial</h3>
-<ul>
-<li>“Atende parcialmente” sugere dependência de canais informais e pessoas específicas.</li>
-<li>Risco aumenta em picos e substituições.</li>
-<li>Ação típica: fonte única + rito curto + registro de mudanças.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Execução">
-<h2>Execução: contribuição é altíssima; preparo tem variação em Outras áreas (Q8A)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Contribuo para boa experiência do cliente (Q4)</h3>
-<table>
-<thead><tr><th>Agrupamento</th><th class="num">% no critério</th></tr></thead>
-<tbody>
-<tr><td>Saúde</td><td class="num">100,0</td></tr>
-<tr><td>Esportes</td><td class="num">100,0</td></tr>
-<tr><td>Outras áreas que atendem</td><td class="num">96,6</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>Preparo percebido no cotidiano (Q8A)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">DFEL</th><th class="num">Outras áreas</th></tr></thead>
-<tbody>
-<tr><td>Sempre</td><td class="num">60,0</td><td class="num">37,9</td></tr>
-<tr><td>Quase sempre</td><td class="num">30,0</td><td class="num">44,8</td></tr>
-<tr><td>Às vezes</td><td class="num">10,0</td><td class="num">13,8</td></tr>
-<tr><td>Raramente</td><td class="num">0,0</td><td class="num">3,4</td></tr>
-</tbody>
-</table>
-<div class="small">Percentuais dentro do grupo.</div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Pós-atendimento">
-<h2>Pós-atendimento: devolutivas sustentam padrão e aprendizagem (Q11)</h2>
-<div class="card">
-<table>
-<thead><tr><th>Categoria</th><th class="num">Saúde</th><th class="num">Esportes</th><th class="num">Outras áreas (atendem)</th><th class="num">Outras áreas (não atendem)</th></tr></thead>
-<tbody>
-<tr><td>Frequentemente</td><td class="num">43,6</td><td class="num">41,7</td><td class="num">44,8</td><td class="num">57,1</td></tr>
-<tr><td>Às vezes</td><td class="num">46,2</td><td class="num">50,0</td><td class="num">41,4</td><td class="num">42,9</td></tr>
-<tr><td>Raramente</td><td class="num">10,3</td><td class="num">0,0</td><td class="num">10,3</td><td class="num">0,0</td></tr>
-<tr><td>Nunca</td><td class="num">0,0</td><td class="num">8,3</td><td class="num">3,4</td><td class="num">0,0</td></tr>
-</tbody>
-</table>
-</div>
-<div class="callout" style="margin-top:14px">
-<b>Ação típica:</b> rotina mínima e previsível de devolutivas para rotinas críticas (mudanças, exceções, encaminhamentos).
+
+          <div class="card-footer">
+            <div class="card-tags">
+              <span class="tag">10 entrevistas</span>
+              <span class="tag">5 por segmento</span>
+            </div>
+            <a class="pdf-pill" href="Etapa2&4_Quali_EP.pdf" download onclick="event.stopPropagation();" data-tooltip="Baixar relatório (PDF)" aria-label="Baixar relatório (PDF)">⬇</a>
+          </div>
+        </div>
+
+        <div class="card card-5" onclick="navigateToStage(5)">
+          <div>
+            <div class="card-top">
+              <span class="card-badge">Etapa 5</span>
+              <span class="card-icon">🗳️</span>
+            </div>
+            <h2 class="card-title">Quanti Colaboradores</h2>
+            <p class="card-description">Questionário estruturado (percepções internas sobre a experiência do cliente).</p>
+          </div>
+
+          <div class="card-footer">
+            <div class="card-tags">
+              <span class="tag">87 respostas</span>
+              <span class="tag">múltiplas áreas</span>
+            </div>
+            <a class="pdf-pill" href="Etapa5_Quanti_Colaboradores.pdf" download onclick="event.stopPropagation();" data-tooltip="Baixar relatório (PDF)" aria-label="Baixar relatório (PDF)">⬇</a>
+          </div>
+        </div>
+
+        <div class="card card-6" onclick="navigateToStage(6)">
+          <div>
+            <div class="card-top">
+              <span class="card-badge">Síntese</span>
+              <span class="card-icon">🧭</span>
+            </div>
+            <h2 class="card-title">Visão Consolidada</h2>
+            <p class="card-description">Conclusões integradas e prioridades (convergências, fricções e roadmap).</p>
+          </div>
+
+          <div class="card-tags">
+            <span class="tag">Convergências</span>
+            <span class="tag">Prioridades</span>
+            <span class="tag">Roadmap</span>
+          </div>
+        </div>
       </div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Esportes (n=2)">
-<h2>Itens específicos de Esportes (n=2): evidência indicativa</h2>
-<div class="grid cols-3">
-<div class="card">
-<h3>(Q5E)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Sempre</td><td class="num">50,0</td></tr>
-<tr><td>Quase sempre</td><td class="num">50,0</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>(Q6E)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Concordo totalmente</td><td class="num">100,0</td></tr>
-</tbody>
-</table>
-</div>
-<div class="card">
-<h3>(Q7E)</h3>
-<table>
-<thead><tr><th>Categoria</th><th class="num">%</th></tr></thead>
-<tbody>
-<tr><td>Sempre</td><td class="num">50,0</td></tr>
-<tr><td>Às vezes</td><td class="num">50,0</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="note" style="margin-top:14px">
-<b>Nota metodológica:</b> roteamento distinto entre DFEL (n=10) e Esportes (n=2). Interpretar apenas como indicativo.
+
       </div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Pontos críticos">
-<h2>Pontos críticos: onde a variação interna gera fricção ao cliente</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Principais pontos críticos (síntese)</h3>
-<ul>
-<li>Variação de domínio de orientações e rotinas (Q1) em pontos de contato diversos.</li>
-<li>Eficiência do fluxo entre áreas (Q3) como maior ponto de atenção transversal.</li>
-<li>Eficiência ao receber demandas e encaminhamentos (Q6A).</li>
-<li>Comunicação interna para viabilizar execução (Q7A) e dispersão em Q15.</li>
-<li>Devolutivas (Q11) como mecanismo de sustentação de padrão.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Como isso aparece na jornada</h3>
-<ul>
-<li>“Vai-e-volta” e repetição de explicação.</li>
-<li>Demora por dependência de confirmação interna.</li>
-<li>Orientações divergentes conforme área/turno/pessoa.</li>
-<li>Sensação de descontinuidade em encaminhamentos.</li>
-</ul>
-<div class="divider"></div>
-<div class="tag danger">Foco: reduzir variação nas transições</div>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Abertas (Q17)">
-<h2>Respostas abertas: melhorias (Q17)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Temas mais citados (Q17)</h3>
-<table>
-<thead><tr><th>Tema</th><th class="num">Menções</th><th class="num">% do total</th></tr></thead>
-<tbody>
-<tr><td>Pessoas e dimensionamento</td><td class="num">23</td><td class="num">26,4</td></tr>
-<tr><td>Infraestrutura e recursos</td><td class="num">21</td><td class="num">24,1</td></tr>
-<tr><td>Comunicação e alinhamento</td><td class="num">17</td><td class="num">19,5</td></tr>
-<tr><td>Sistemas e tecnologia</td><td class="num">16</td><td class="num">18,4</td></tr>
-<tr><td>Processos e fluxos</td><td class="num">16</td><td class="num">18,4</td></tr>
-<tr><td>Atendimento ao cliente</td><td class="num">14</td><td class="num">16,1</td></tr>
-<tr><td>Gestão e organização</td><td class="num">5</td><td class="num">5,7</td></tr>
-<tr><td>Outros / não classificável</td><td class="num">29</td><td class="num">33,3</td></tr>
-</tbody>
-</table>
-<div class="small" style="margin-top:8px">Regra: contabiliza menções; uma resposta pode citar mais de um tema.</div>
-</div>
-<div class="card">
-<h3>Leitura gerencial</h3>
-<ul>
-<li>Melhorias se concentram em capacidade (sistemas/infraestrutura) e organização de fluxos.</li>
-<li>Pessoas e dimensionamento aparecem como condição para sustentar padrão em picos/substituições.</li>
-<li>Comunicação/alinhamento surgem como mecanismo de redução de variação.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Abertas (Q18)">
-<h2>Respostas abertas: fatores importantes (Q18)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Temas mais citados (Q18)</h3>
-<table>
-<thead><tr><th>Tema</th><th class="num">Menções</th><th class="num">% do total</th></tr></thead>
-<tbody>
-<tr><td>Atendimento ao cliente</td><td class="num">33</td><td class="num">37,9</td></tr>
-<tr><td>Infraestrutura e recursos</td><td class="num">30</td><td class="num">34,5</td></tr>
-<tr><td>Pessoas e dimensionamento</td><td class="num">27</td><td class="num">31,0</td></tr>
-<tr><td>Gestão e organização</td><td class="num">25</td><td class="num">28,7</td></tr>
-<tr><td>Sistemas e tecnologia</td><td class="num">6</td><td class="num">6,9</td></tr>
-<tr><td>Comunicação e alinhamento</td><td class="num">5</td><td class="num">5,7</td></tr>
-<tr><td>Processos e fluxos</td><td class="num">4</td><td class="num">4,6</td></tr>
-<tr><td>Outros / não classificável</td><td class="num">19</td><td class="num">21,8</td></tr>
-</tbody>
-</table>
-<div class="small" style="margin-top:8px">Regra: contabiliza menções; uma resposta pode citar mais de um tema.</div>
-</div>
-<div class="card">
-<h3>Leitura gerencial</h3>
-<ul>
-<li>Atendimento ao cliente aparece como prioridade explícita.</li>
-<li>Infraestrutura e recursos são condição material de execução.</li>
-<li>Gestão e organização (liderança, responsabilidades) sustentam padrão e previsibilidade.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Diagnóstico (4 eixos)">
-<h2>Diagnóstico transversal: Pessoas, Processos, Canais e Capacidade</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Pessoas</h3>
-<ul>
-<li>Preparo percebido alto; variação em domínio de rotinas e exceções em pontos de contato diversos.</li>
-<li>Alavancas: ambientação, atualização periódica, devolutivas como aprendizagem.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Processos</h3>
-<ul>
-<li>Processos bem avaliados; alerta principal em transições (Q3) e recepção de demandas (Q6A).</li>
-<li>Alavancas: padrão mínimo de encaminhamento, prazos e responsabilidades.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Canais</h3>
-<ul>
-<li>Dispersão em comunicação (Q15) e Q7A indica dependência de informalidade.</li>
-<li>Alavancas: fonte única, registro de mudanças, mensagens padrão.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Capacidade</h3>
-<ul>
-<li>Condições bem avaliadas; sistemas/infraestrutura aparecem como impeditivos recorrentes nas abertas.</li>
-<li>Alavancas: plano de correções priorizado por impacto no atendimento.</li>
-</ul>
-</div>
-</div>
-<div class="callout" style="margin-top:14px">
-<b>Leitura transversal:</b> manter os patamares altos e reduzir variação principalmente em <b>transições</b> (processos) e <b>alinhamento</b> (canais).
-      </div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Causa → efeito">
-<h2>Mapa causa → efeito → risco → oportunidade (síntese)</h2>
-<div class="card">
-<table>
-<thead><tr><th>Eixo</th><th>Causa provável</th><th>Efeito operacional</th><th>Risco para o cliente</th><th>Oportunidade</th></tr></thead>
-<tbody>
-<tr><td>Processos</td><td>Encaminhamento sem padrão mínimo</td><td>Devolução e retrabalho</td><td>Descontinuidade e aumento de tempo</td><td>Padrão mínimo; prazos e responsabilidades</td></tr>
-<tr><td>Canais</td><td>Atualizações sem registro central</td><td>Divergência de orientação</td><td>Informação inconsistente</td><td>Fonte única; registro de mudanças</td></tr>
-<tr><td>Pessoas</td><td>Diferença de domínio de exceções</td><td>Dependência de pessoas específicas</td><td>“Precisa confirmar”; demora</td><td>Ambientação; atualização; devolutivas</td></tr>
-<tr><td>Capacidade</td><td>Impedimentos de sistema/infraestrutura</td><td>Atrasos e interrupções</td><td>Espera e frustração</td><td>Plano de correções por impacto</td></tr>
-</tbody>
-</table>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Priorizar">
-<h2>Princípios de priorização das ações</h2>
-<div class="grid cols-2">
-<div class="card">
-<ul>
-<li><b>Impacto</b> na continuidade do atendimento (reduzir “vai-e-volta”).</li>
-<li><b>Redução de variação</b> de padrão (mesma regra em toda a unidade).</li>
-<li><b>Viabilidade</b> (dependências de tecnologia, governança e pessoas).</li>
-<li><b>Sustentação</b> (capacidade de manter a melhoria ao longo do tempo).</li>
-</ul>
-</div>
-<div class="card">
-<div class="tag warn">Orientação: começar por ações de alto impacto e baixo esforço</div>
-<div class="divider"></div>
-<p class="muted">A seguir, recomendações por horizonte (0–30 / 30–90 / 90+ dias).</p>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="0–30 dias">
-<h2>Plano de ação: 0–30 dias (imediato)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Fonte única de orientações e mudanças</h3>
-<ul>
-<li>Consolidar rotinas, exceções e mensagens padrão.</li>
-<li>Registro do que mudou (quando/por quê).</li>
-<li>Acesso rápido para todos os pontos de contato.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Padrão mínimo de encaminhamento entre áreas</h3>
-<ul>
-<li>Campos mínimos (contexto, documentos, prazos, responsável).</li>
-<li>Treino rápido nos pontos de entrada.</li>
-<li>Registro simples para rastreabilidade.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Alinhamento operacional curto e regular</h3>
-<ul>
-<li>15–20 min/semana com pauta fixa.</li>
-<li>Registro de mudanças e dúvidas recorrentes.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Rotina mínima de devolutivas</h3>
-<ul>
-<li>Quinzenal/mensal por equipe, focada em 2–3 pontos críticos.</li>
-<li>Aprendizagem e correção de variação.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="30–90 dias">
-<h2>Plano de ação: 30–90 dias (tático)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Formalizar fluxos de transição</h3>
-<ul>
-<li>Mapear onde a jornada muda de “dono”.</li>
-<li>Definir responsabilidades, prazos e registros.</li>
-<li>Reduzir filas invisíveis e retrabalho.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Padronizar mensagens de orientação ao cliente</h3>
-<ul>
-<li>Mensagens padrão para temas recorrentes e exceções.</li>
-<li>Como dizer e como registrar.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Ambientação e reciclagem por função</h3>
-<ul>
-<li>Trilha curta para novos colaboradores.</li>
-<li>Reciclagem periódica para rotinas e exceções.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Painel mensal de acompanhamento</h3>
-<ul>
-<li>6–8 indicadores simples (Q3, Q6A, Q15/Q7A, Q1, Q11, Q12).</li>
-<li>Responsáveis e periodicidade definidos.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="90+ dias">
-<h2>Plano de ação: 90+ dias (estrutural)</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Plano de melhorias em sistemas e infraestrutura</h3>
-<ul>
-<li>Lista priorizada de ajustes por impacto no atendimento.</li>
-<li>Estabilidade, acessos, integração de registros, recursos físicos.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Governança de processos e integração</h3>
-<ul>
-<li>Definir donos de processo, ritos de revisão e atualização.</li>
-<li>Sustentar padronização e evitar regressão.</li>
-</ul>
-</div>
-</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Matriz Impacto × Esforço">
-<h2>Matriz de priorização (impacto × esforço)</h2>
-<div class="card">
-<table>
-<thead><tr><th>Recomendação</th><th>Horizonte</th><th>Impacto</th><th>Esforço</th></tr></thead>
-<tbody>
-<tr><td>Fonte única de orientações e mudanças</td><td>0–30 dias</td><td>Alto</td><td>Baixo a médio</td></tr>
-<tr><td>Padrão mínimo de encaminhamento entre áreas</td><td>0–30 dias</td><td>Alto</td><td>Médio</td></tr>
-<tr><td>Alinhamento operacional curto e regular</td><td>0–30 dias</td><td>Médio a alto</td><td>Baixo</td></tr>
-<tr><td>Rotina mínima de devolutivas</td><td>0–30 dias</td><td>Médio</td><td>Baixo</td></tr>
-<tr><td>Formalização de fluxos de transição</td><td>30–90 dias</td><td>Alto</td><td>Médio</td></tr>
-<tr><td>Padronização de mensagens ao cliente</td><td>30–90 dias</td><td>Médio a alto</td><td>Médio</td></tr>
-<tr><td>Ambientação e reciclagem por função</td><td>30–90 dias</td><td>Médio</td><td>Médio</td></tr>
-<tr><td>Painel de acompanhamento operacional</td><td>30–90 dias</td><td>Médio</td><td>Baixo a médio</td></tr>
-<tr><td>Plano de melhorias em sistemas/infraestrutura</td><td>90+ dias</td><td>Alto</td><td>Alto</td></tr>
-<tr><td>Governança de processos e integração</td><td>90+ dias</td><td>Alto</td><td>Médio a alto</td></tr>
-</tbody>
-</table>
-</div>
-<div class="small">Observação: manter consistência de termos (“baixo a médio”, “médio a alto”).</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Indicadores">
-<h2>Indicadores de monitoramento (mensal)</h2>
-<div class="grid cols-2">
-<div class="card">
-<ol style="margin:10px 0 0 18px">
-<li><b>Fluxo entre áreas (Q3)</b>: concordância e respostas intermediárias/discordantes.</li>
-<li><b>Receber demandas (Q6A)</b>: reduzir “regular/pouco eficiente”.</li>
-<li><b>Comunicação (Q15 e Q7A)</b>: reduzir dispersão; elevar “atende totalmente”.</li>
-</ol>
-</div>
-<div class="card">
-<ol start="4" style="margin:10px 0 0 18px">
-<li><b>Domínio de orientações (Q1)</b>: elevar patamar em pontos de contato diversos.</li>
-<li><b>Devolutivas (Q11)</b>: aumentar “frequentemente” e reduzir “raramente/nunca”.</li>
-<li><b>Condições (Q12)</b>: manter patamar e reduzir “às vezes”.</li>
-</ol>
-</div>
-</div>
-<div class="callout" style="margin-top:14px"><b>Governança:</b> definir responsáveis, periodicidade e rito de correção rápida de desvios.</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Conclusões">
-<h2>Conclusões</h2>
-<div class="grid cols-2">
-<div class="card">
-<h3>Pontos fortes</h3>
-<ul>
-<li>Clima, satisfação e colaboração em patamares elevados.</li>
-<li>Percepção muito positiva de qualidade do atendimento e processos.</li>
-<li>Compromisso: contribuição para boa experiência do cliente é quase unânime.</li>
-</ul>
-</div>
-<div class="card">
-<h3>Fricções centrais</h3>
-<ul>
-<li>Transições entre áreas (Q3) e recepção de demandas (Q6A).</li>
-<li>Dispersão em comunicação interna (Q15/Q7A) e domínio de rotinas (Q1).</li>
-<li>Capacidade (sistemas/infraestrutura) como tema recorrente nas abertas.</li>
-</ul>
-</div>
-</div>
-<div class="divider"></div>
-<div class="tag ok">Mensagem final: reduzir variação nas transições e formalizar o mínimo necessário</div>
-</section>
-<section class="slide" data-stage="funcCenso" data-title="Próximos passos">
-<h2>Próximos passos</h2>
-<div class="grid cols-3">
-<div class="card">
-<div class="tag ok">0–30 dias</div>
-<ul>
-<li>Fonte única</li>
-<li>Padrão mínimo de encaminhamento</li>
-<li>Alinhamento curto</li>
-<li>Devolutivas mínimas</li>
-</ul>
-</div>
-<div class="card">
-<div class="tag">30–90 dias</div>
-<ul>
-<li>Formalizar fluxos de transição</li>
-<li>Mensagens padrão</li>
-<li>Ambientação/reciclagem</li>
-<li>Painel mensal</li>
-</ul>
-</div>
-<div class="card">
-<div class="tag warn">90+ dias</div>
-<ul>
-<li>Plano de capacidade (sistemas/infra)</li>
-<li>Governança de processos</li>
-</ul>
-</div>
-</div>
-<div class="small" style="margin-top:12px">Dica: use impressão para PDF (Ctrl/Cmd+P) se precisar distribuir.</div>
-</section>
-<!-- UI -->
-<div aria-label="Evolução por capítulos" class="chapters">
-<div class="chaptersTrack" id="chapters"></div>
-</div>
-<div class="progress"><div id="bar"></div></div>
-<div class="footer">
-<div id="where">1 / 1</div>
-<div class="muted" id="title"></div>
-</div>
-</div>
-<script>
-    (function(){
-      // Logos (para aparecerem também no PDF): cole URLs públicas ou use caminhos relativos
-      const LOGO_SESC_URL = 'https://www.sescpb.com.br/wp-content/uploads/2021/03/cropped-logo-sesc.png';
-      const LOGO_OPINIAO_URL = 'https://grupoopiniao.inf.br/wp-content/uploads/2025/05/OPINIAO_marca_F01.png';
-      function applyLogo(imgId, url){
-        const img = document.getElementById(imgId);
-        if(!img) return;
-        const wrap = img.closest('.logoWrap');
-        if(!url){
-          if(wrap) wrap.style.display = 'none';
-          return;
-        }
-        img.src = url;
-        img.decoding = 'async';
-        img.loading = 'eager';
-        if(wrap) wrap.style.display = '';
-      }
-      applyLogo('logoSesc', LOGO_SESC_URL);
-      applyLogo('logoOpiniao', LOGO_OPINIAO_URL);
+    </div>
+  </div>
 
-      const slides = Array.from(document.querySelectorAll('.slide'));
-      const bar = document.getElementById('bar');
-      const where = document.getElementById('where');
-      const title = document.getElementById('title');
-      // slides
-
-
-      // ---------- In-table bars (percent columns) ----------
-      function parsePtNumber(s){
-        if(!s) return NaN;
-        const clean = s.toString().trim()
-          .replace('%','')
-          .replace(/\./g,'')
-          .replace(',', '.')
-          .replace(/[\s\u00A0]+/g,' ');
-        const v = parseFloat(clean);
-        return Number.isFinite(v) ? v : NaN;
-      }
-
-      function enhanceTables(){
-        const tables = Array.from(document.querySelectorAll('table'));
-        tables.forEach((tbl)=>{
-          const ths = Array.from(tbl.querySelectorAll('thead th'));
-          if(!ths.length) return;
-
-          // Converte APENAS colunas percentuais em barras (0–100%).
-          // Salvaguardas importantes:
-          // - Não criar barras para notas/médias (0–10) e colunas de mínimo/máximo.
-          // - Não criar barras para Prazo/Prioridade (tabelas de ações).
-          const pctCols = [];
-          for(let c=0;c<ths.length;c++){
-            if(c===0) continue; // 1ª coluna costuma ser texto
-            const h = (ths[c].textContent||'').trim().toLowerCase();
-
-            // Exclusões explícitas
-            if(h.includes('prazo') || h.includes('prioridade')) continue;
-            if(h === 'n' || h === 'qtde' || h === 'quantidade') continue;
-
-            const strongPct =
-              h.includes('%') ||
-              h.includes('percent') || h.includes('percentual') ||
-              h.includes('9–10') || h.includes('9-10') || h.includes('nota 9');
-
-            // Evita barras para colunas típicas de nota/escala (0–10), min/max, média (sem sinal claro de %)
-            if((h.includes('média') || h.includes('min') || h.includes('máx') || h.includes('max')) && !strongPct){
-              continue;
-            }
-
-            const vals = [];
-            let hasDecimal = false;
-            Array.from(tbl.querySelectorAll('tbody tr')).forEach((tr)=>{
-              const td = tr.children[c];
-              if(!td) return;
-              const raw = (td.textContent||'').trim();
-              const v = parsePtNumber(raw);
-              if(Number.isFinite(v)){
-                vals.push(v);
-                if(v % 1 !== 0) hasDecimal = true;
-              }
-            });
-            if(vals.length < 2) continue;
-
-            const minV = Math.min(...vals);
-            const maxV = Math.max(...vals);
-
-            // Heurística conservadora: só assume percentual se:
-            // - há sinal forte no cabeçalho; OU
-            // - todos os valores estão entre 0 e 100, com máximo > 10 (evita notas 0–10),
-            //   e há indício de percentual (decimal ou termos como taxa/índice).
-            const looksPct = strongPct || (
-              minV >= 0 && maxV <= 100 &&
-              maxV > 10 &&
-              (hasDecimal || h.includes('taxa') || h.includes('índice') || h.includes('indice'))
-            );
-
-            if(looksPct) pctCols.push(c);
-          }
-
-          if(!pctCols.length) return;
-
-          pctCols.forEach((c)=>{
-            Array.from(tbl.querySelectorAll('tbody tr')).forEach((tr)=>{
-              const td = tr.children[c];
-              if(!td) return;
-              const raw = (td.textContent||'').trim();
-              const v0 = parsePtNumber(raw);
-              if(!Number.isFinite(v0)) return;
-
-              const v = Math.max(0, Math.min(100, v0));
-              const label = (v % 1 === 0 ? String(v) : v.toFixed(1)).replace('.', ',') + '%';
-
-              td.innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px">
-                  <div style="flex:1; height:12px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden">
-                    <div style="height:100%; width:${v}%; background:linear-gradient(90deg,var(--accent),var(--accent2));"></div>
-                  </div>
-                  <div class="num" style="min-width:62px; text-align:right; font-variant-numeric:tabular-nums">${label}</div>
-                </div>
-              `;
-            });
-          });
-        });
-      }
-
-      enhanceTables();
-
-      // ---------- Perguntas sob as visualizações ----------
-      const QUESTION = {
-        "Q1": "Você conhece as etapas da jornada do cliente no SESC 504 Sul?",
-        "Q2": "As orientações sobre como o cliente deve ser atendido na sua área são:",
-        "Q3": "Em geral, o fluxo entre setores (envio de clientes entre áreas) funciona de forma eficiente?",
-        "Q4": "Você sente que sua área contribui positivamente para a experiência do cliente?",
-        "Q5-S": "As informações repassadas aos clientes antes do atendimento são:",
-        "Q6-S": "O fluxo de chegada, recepção e encaminhamento dos clientes funciona bem?",
-        "Q7-S": "Quanto ao relacionamento com o cliente, você se sente:",
-        "Q8-S": "Os tempos de espera do cliente estão geralmente dentro do que você considera adequado?",
-        "Q5-E": "Os clientes chegam às atividades com informações claras sobre horários, regras e funcionamento?",
-        "Q6-E": "A interação dos professores / instrutores com o público contribui para uma experiência positiva?",
-        "Q7-E": "A infraestrutura disponível (salas, piscinas, equipamentos) suporta bem a demanda atual?",
-        "Q5-A": "As informações que sua área recebe sobre processos e regras de atendimento são:",
-        "Q6-A": "Quando sua área precisa coordenar algo com outra área, o processo costuma ser:",
-        "Q7-A": "A comunicação interna atende às necessidades do seu trabalho?",
-        "Q8-A": "Você sente que tem autonomia adequada para executar suas funções?",
-        "Q9": "No geral, como você avalia o clima de trabalho da unidade?",
-        "Q10": "Existe colaboração entre os colegas da sua área?",
-        "Q11": "Você recebe feedback sobre seu desempenho?",
-        "Q12": "As condições de trabalho (equipamentos, estrutura, materiais) permitem bom desempenho?",
-        "Q13": "A unidade 504 Sul oferece um atendimento de qualidade para os clientes?",
-        "Q14": "A unidade tem processos organizados e claros?",
-        "Q15": "A comunicação interna funciona adequadamente?",
-        "Q16": "De maneira geral, qual é seu nível de satisfação em trabalhar na unidade 504 Sul?",
-        "Q17": "O que poderia melhorar na sua rotina de trabalho ou nos processos da unidade?",
-        "Q18": "O que você considera o principal ponto positivo da unidade e da sua área?",
-        "Q19": "Há quanto tempo você trabalha no SESC DF?",
-        "Q20": "Faixa etária:"
+  <script>
+    function navigateToStage(stageNumber) {
+      const stageFiles = {
+        1: 'etapa1_cliente_secreto.html',
+        2: 'etapa2_quali_clientes.html',
+        3: 'etapa3_quanti_clientes.html',
+        4: 'etapa4_quali_colaboradores.html',
+        5: 'etapa5_quanti_colaboradores.html',
+        6: 'sintese_visao_consolidada.html'
       };
 
-      // Extrai códigos como (Q16), (Q5S), (Q5-A), (Q7E) etc.
-      function extractQCodeFromText(t){
-        if(!t) return null;
-        const start = t.indexOf('(Q');
-        if(start < 0) return null;
-        const end = t.indexOf(')', start);
-        if(end < 0) return null;
-
-        const inside = t.slice(start+1, end); // ex.: "Q5S" ou "Q5-A"
-        const cleaned = inside.replace(/\s+/g,'');
-        if(cleaned[0] !== 'Q') return null;
-
-        // remove hífens, preserva apenas como separador lógico
-        const rest = cleaned.slice(1).replace(/-/g,'');
-
-        let num = '';
-        let suf = '';
-        for(let k=0;k<rest.length;k++){
-          const ch = rest[k];
-          if(ch >= '0' && ch <= '9') num += ch;
-          else { suf = ch.toUpperCase(); break; }
-        }
-        if(!num) return null;
-        return suf ? ('Q' + num + '-' + suf) : ('Q' + num);
+      if (stageFiles[stageNumber]) {
+        window.location.href = stageFiles[stageNumber];
       }
-
-      function injectQuestions(scope=document){
-        const tables = Array.from(scope.querySelectorAll('table'));
-        tables.forEach((tbl)=>{
-          const card = tbl.closest('.card');
-          if(!card) return;
-
-          let code = null;
-          const h3 = card.querySelector('h3');
-          if(h3) code = extractQCodeFromText(h3.textContent || '');
-
-          if(!code){
-            const slide = tbl.closest('.slide');
-            const h2 = slide ? slide.querySelector('h2') : null;
-            if(h2) code = extractQCodeFromText(h2.textContent || '');
-          }
-
-          if(!code) return;
-          const text = QUESTION[code];
-          if(!text) return;
-
-          // âncora: abaixo da tabela e de uma nota curta, quando existir
-          let anchor = tbl;
-          const next = tbl.nextElementSibling;
-          if(next && next.classList && next.classList.contains('small')) anchor = next;
-
-          let qnode = card.querySelector('.qtxt');
-          if(!qnode){
-            qnode = document.createElement('div');
-            qnode.className = 'qtxt';
-            anchor.insertAdjacentElement('afterend', qnode);
-          }
-          qnode.innerHTML = '<b>Pergunta:</b> ' + text;
-        });
-      }
-
-      // ---------- Capítulos na barra inferior ----------
-      
-      const chaptersEl = document.getElementById('chapters');
-
-      // ---------- Stage model ----------
-      const hubIndex = slides.findIndex(s => (s.dataset.stage || '') === 'hub');
-      const stageToIndices = new Map();
-      slides.forEach((s, idx) => {
-        const st = s.dataset.stage || 'hub';
-        if(!stageToIndices.has(st)) stageToIndices.set(st, []);
-        stageToIndices.get(st).push(idx);
-      });
-
-      const stageLabels = {
-  sintese: 'Síntese Consolidada',
-        hub: 'Hub · Etapas do projeto',
-        qualCli: 'Quali Clientes (Profundidade)',
-        cs: 'Cliente Secreto',
-        quantCliTel: 'Quanti Clientes (Telefone)',
-        qualInt: 'Quali Interna (Colaboradores)',
-        funcCenso: 'Quanti Colaboradores (Censo)'
-      };
-
-      const STAGE_PDFS = {
-        cs: 'Etapa1_Cliente_Secreto.pdf',
-        qualCli: 'Etapa2%264_Quali_EP.pdf',
-        qualInt: 'Etapa2%264_Quali_EP.pdf',
-        funcCenso: 'Etapa5_Quanti_Colabs.pdf'
-      };
-
-      const pdfBtn = document.getElementById('pdfBtn');
-
-      function updatePdfButton(stage){
-        if(!pdfBtn) return;
-        // Etapa 3 ainda sem relatório final
-        if(stage === 'quantCliTel'){
-          pdfBtn.classList.add('show','disabled');
-          pdfBtn.setAttribute('aria-disabled','true');
-          pdfBtn.textContent = 'PDF em elaboração';
-          pdfBtn.setAttribute('href', '#');
-          pdfBtn.removeAttribute('download');
-          return;
-        }
-        const file = STAGE_PDFS[stage];
-        if(file){
-          pdfBtn.classList.add('show');
-          pdfBtn.classList.remove('disabled');
-          pdfBtn.setAttribute('aria-disabled','false');
-          pdfBtn.textContent = 'Baixar PDF';
-          pdfBtn.setAttribute('href', file);
-          pdfBtn.setAttribute('download', '');
-          return;
-        }
-        pdfBtn.classList.remove('show','disabled');
-        pdfBtn.setAttribute('aria-disabled','true');
-        pdfBtn.setAttribute('href', '#');
-        pdfBtn.removeAttribute('download');
-      }
-
-
-      function getStageList(stage){
-        return stageToIndices.get(stage) || [];
-      }
-      function getStageOf(idx){
-        return (slides[idx] && slides[idx].dataset.stage) ? slides[idx].dataset.stage : 'hub';
-      }
-      function localIndex(stage, globalIdx){
-        const list = getStageList(stage);
-        return list.indexOf(globalIdx);
-      }
-
-      // ---------- Chapters per stage (positions are 0-based within each stage) ----------
-      const STAGE_CHAPTERS = {
-  sintese: [
-    { pos: 0, label: 'Capa' },
-    { pos: 1, label: 'Como ler' },
-    { pos: 2, label: 'Convergências' },
-    { pos: 3, label: 'Momentos' },
-    { pos: 4, label: 'Prioridades' },
-    { pos: 5, label: 'Roadmap' },
-    { pos: 6, label: 'Indicadores' }
-  ],
-        hub: [{ pos: 0, label: 'Etapas' }],
-        qualCli: [
-          { pos: 0, label: 'Contexto' },
-          { pos: 2, label: 'Síntese' },
-          { pos: 3, label: 'Jornada' },
-          { pos: 5, label: 'Canais' },
-          { pos: 8, label: 'Saúde vs Esportes' },
-          { pos: 13, label: 'Oportunidades' }
-        ],
-        cs: [
-          { pos: 0, label: 'Contexto' },
-          { pos: 3, label: 'Resultados' },
-          { pos: 7, label: 'Jornada' },
-          { pos: 12, label: 'Diagnóstico' },
-          { pos: 15, label: 'Recomendações' },
-          { pos: 18, label: 'Monitoramento' }
-        ],
-        quantCliTel: [{ pos: 0, label: 'Capa' }, { pos: 1, label: 'Status' }],
-        qualInt: [
-          { pos: 0, label: 'Contexto' },
-          { pos: 2, label: 'Síntese' },
-          { pos: 3, label: 'Jornada' },
-          { pos: 5, label: 'Fluxos' },
-          { pos: 6, label: 'Comunicação' },
-          { pos: 8, label: 'Sistemas' },
-          { pos: 9, label: 'Desenvolvimento' },
-          { pos: 10, label: 'Oportunidades' }
-        ],
-        // Capítulos originais do deck de Censo (antes o arquivo tinha hub + etapa).
-        // Convertidos para posições dentro da etapa (stage start = capa).
-        funcCenso: [
-          { pos: 2,  label: 'Contexto e leitura' },
-          { pos: 6,  label: 'O que está forte' },
-          { pos: 13, label: 'Onde a continuidade se rompe' },
-          { pos: 24, label: 'Recomendações priorizadas' }
-        ]
-      };
-
-      function getChapters(stage){
-        return STAGE_CHAPTERS[stage] || [{pos:0,label:''}];
-      }
-
-      function currentChapterLabel(stage, localPos){
-        const ch = getChapters(stage);
-        let lbl = '';
-        ch.forEach((c)=>{
-          if(Number.isFinite(c.pos) && c.pos <= localPos) lbl = c.label;
-        });
-        return lbl || stageLabels[stage] || '';
-      }
-
-      function buildChapters(stage){
-        if(!chaptersEl) return;
-        chaptersEl.innerHTML = '';
-        const list = getStageList(stage);
-        const total = list.length || 1;
-
-        // normalize chapter positions (0..total-1)
-        const ch = getChapters(stage)
-          .map(c => ({...c, pos: (c.pos===null ? (total-1) : c.pos)}))
-          .filter(c => Number.isFinite(c.pos) && c.pos >= 0 && c.pos <= total-1);
-
-        ch.forEach((c)=>{
-          const item = document.createElement('div');
-          item.className = 'chItem';
-          item.dataset.pos = String(c.pos);
-
-          // position across the track
-          const denom = Math.max(1, total - 1);
-          const pct = (c.pos / denom) * 100;
-          item.style.left = pct.toFixed(4) + '%';
-
-          const dot = document.createElement('div');
-          dot.className = 'chDot';
-
-          const lab = document.createElement('div');
-          lab.className = 'chLbl';
-          lab.textContent = c.label;
-
-          item.appendChild(dot);
-          item.appendChild(lab);
-
-          item.addEventListener('click', (e)=>{
-            e.stopPropagation();
-            const p = parseInt(item.dataset.pos, 10);
-            if(!Number.isFinite(p)) return;
-            const target = list[p];
-            if(Number.isFinite(target)) show(target);
-          });
-
-          chaptersEl.appendChild(item);
-        });
-      }
-
-      function updateChaptersActive(stage, localPos){
-        if(!chaptersEl) return;
-        chaptersEl.querySelectorAll('.chItem').forEach((node)=>{
-          const p = parseInt(node.getAttribute('data-pos'), 10);
-          const active = Number.isFinite(p) && p <= localPos;
-          node.classList.toggle('active', active);
-        });
-      }
-
-      // ---------- Slides (stage-aware) ----------
-      let i = 0;
-      let currentStage = getStageOf(i);
-
-      function show(idx){
-        i = Math.max(0, Math.min(slides.length-1, idx));
-        currentStage = getStageOf(i);
-        const list = getStageList(currentStage);
-        const pos = Math.max(0, localIndex(currentStage, i));
-        const total = list.length || 1;
-
-        slides.forEach((s,k)=>s.classList.toggle('active', k===i));
-
-        const pct = ((pos+1)/total)*100;
-        bar.style.width = pct.toFixed(2) + '%';
-        where.textContent = (pos+1) + ' / ' + total;
-
-        title.textContent = currentChapterLabel(currentStage, pos);
-        document.title = '(' + (pos+1) + '/' + total + ') ' + (stageLabels[currentStage] || 'Painel de Resultados');
-
-        buildChapters(currentStage);
-        updateChaptersActive(currentStage, pos);
-        updatePdfButton(currentStage);
-
-        enhanceTables(slides[i]);
-        injectQuestions(slides[i]);
-      }
-
-      function next(){
-        const list = getStageList(currentStage);
-        const pos = localIndex(currentStage, i);
-        const atLast = (pos >= list.length-1);
-        if(currentStage !== 'hub' && atLast){
-          show(hubIndex >= 0 ? hubIndex : 0);
-          return;
-        }
-        if(i >= slides.length-1) show(hubIndex >= 0 ? hubIndex : 0);
-        else show(i+1);
-      }
-
-      function prev(){
-        const list = getStageList(currentStage);
-        const pos = localIndex(currentStage, i);
-        const atFirst = (pos <= 0);
-        if(currentStage !== 'hub' && atFirst){
-          show(hubIndex >= 0 ? hubIndex : 0);
-          return;
-        }
-        show(i-1);
-      }
-
-      function goHome(){
-        const list = getStageList(currentStage);
-        show(list.length ? list[0] : (hubIndex>=0?hubIndex:0));
-      }
-      function goEnd(){
-        const list = getStageList(currentStage);
-        show(list.length ? list[list.length-1] : (hubIndex>=0?hubIndex:0));
-      }
-
-      // ---------- Events ----------
-      window.addEventListener('keydown', (e)=>{
-        const k = e.key;
-        if(k==='ArrowRight' || k==='PageDown' || k===' '){ e.preventDefault(); next(); return; }
-        if(k==='ArrowLeft'  || k==='PageUp'){ e.preventDefault(); prev(); return; }
-        if(k==='Home'){ e.preventDefault(); goHome(); return; }
-        if(k==='End'){ e.preventDefault(); goEnd(); return; }
-      });
-
-      // Click zones
-      window.addEventListener('click', (e)=>{
-        // Evitar capturar cliques em elementos interativos
-        const el = e.target;
-        if(el && (el.closest && (el.closest('a,button,input,textarea,select,[data-stage],[data-go],.chItem')))) return;
-
-        const w = window.innerWidth;
-        if(e.clientX > w*0.66) next();
-        else if(e.clientX < w*0.33) prev();
-      });
-
-      // Hub (etapas)
-      function stageRoute(stage){
-        const list = getStageList(stage);
-        if(list && list.length){ show(list[0]); return; }
-        show(hubIndex >= 0 ? hubIndex : 0);
-      }
-
-      document.querySelectorAll('.hubBtn[data-stage]').forEach((node)=>{
-        node.addEventListener('click', (e)=>{
-          stageRoute(node.getAttribute('data-stage'));
-          e.stopPropagation();
-        });
-        node.addEventListener('keydown', (e)=>{
-          if(e.key === 'Enter' || e.key === ' '){
-            e.preventDefault();
-            stageRoute(node.getAttribute('data-stage'));
-          }
-        });
-      });
-
-      // Storytelling jump blocks (data-go aponta índice global)
-      document.querySelectorAll('[data-go]').forEach((node)=>{
-        node.addEventListener('click', (e)=>{
-          const n = parseInt(node.getAttribute('data-go'), 10);
-          if(!Number.isFinite(n)) return;
-          show(n);
-          e.stopPropagation();
-        });
-      });
-
-      // Print/PDF: imprimir o painel completo (todos os slides).
-      // Estratégia:
-      // 1) aplicar classe printAll (CSS já força todos os slides a aparecerem e quebra por página);
-      // 2) reordenar os slides no DOM para respeitar a ordem das etapas no PDF (Etapa 1 antes da 2);
-      // 3) ao finalizar a impressão, restaurar a ordem original.
-      const printBtn = document.getElementById('printBtn');
-      const deckEl = document.querySelector('.deck');
-      let __origSlideOrder = null;
-
-      function reorderSlidesForPrint(){
-        if(!deckEl) return;
-        const slides = Array.from(deckEl.querySelectorAll('.slide'));
-        __origSlideOrder = slides;
-        const stageOrder = ['hub','sintese','cs','qualCli','quantCliTel','qualInt','funcCenso'];
-
-        const byStage = new Map();
-        for(const s of slides){
-          const st = s.getAttribute('data-stage') || '';
-          if(!byStage.has(st)) byStage.set(st, []);
-          byStage.get(st).push(s);
-        }
-
-        const newList = [];
-        for(const st of stageOrder){
-          const group = byStage.get(st);
-          if(group && group.length) newList.push(...group);
-          byStage.delete(st);
-        }
-        // quaisquer outras etapas (se existirem)
-        for(const group of byStage.values()) newList.push(...group);
-
-        for(const node of newList) deckEl.appendChild(node);
-      }
-
-      function restoreSlidesAfterPrint(){
-        if(!deckEl || !__origSlideOrder) return;
-        for(const node of __origSlideOrder) deckEl.appendChild(node);
-        __origSlideOrder = null;
-      }
-
-      if(printBtn){
-        printBtn.addEventListener('click', (e)=>{
-          e.preventDefault();
-          e.stopPropagation();
-          reorderSlidesForPrint();
-          document.body.classList.add('printAll');
-          // Mantém a chamada dentro do gesto do clique (evita bloqueio do navegador).
-          window.print();
-        });
-      }
-      window.addEventListener('afterprint', ()=>{
-        document.body.classList.remove('printAll');
-        restoreSlidesAfterPrint();
-      });
-
-      // init
-      show(hubIndex >= 0 ? hubIndex : 0);
-    })();
-</script>
+    }
+  </script>
 </body>
 </html>
